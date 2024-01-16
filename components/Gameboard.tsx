@@ -7,64 +7,12 @@ import { range } from "lodash";
 import { classNames } from "../utilities/classNames";
 
 export const Gameboard: FunctionComponent = ({}) => {
-  // const boardState: Board = new Array(3)
-  //   .fill(new Array(3).fill(0))
-  //   .map((row) => row.map(() => ({ state: SquareState.UNKNOWN })));
-  // boardState[0][0].state = SquareState.SHIP_HIT;
-  // const ships: ShipShape[] = [
-  //   [[true]],
-  //   [[true, true]],
-  //   // [[true, true, true]],
-  //   // [[true, true, true]],
-  //   // [[true, true, true]],
-  // ];
-  // const possibleConfigs = possibleConfigurations(boardState, ships);
-  // console.log(possibleConfigs);
-
   const boardSize = 8;
   const [boardState, setBoardState] = useState<Board>(
     new Array(boardSize)
       .fill(new Array(boardSize).fill(0))
       .map((row) => row.map(() => ({ state: SquareState.UNKNOWN })))
   );
-
-  // useEffect(() => {
-  //   const state = new Array(boardSize)
-  //     .fill(new Array(boardSize).fill(0))
-  //     .map((row) => row.map(() => ({ state: SquareState.UNKNOWN })));
-  //   const sunkPositions = [
-  //     [0, 0],
-  //     [0, 1],
-  //     [0, 2],
-  //     [2, 0],
-  //     [3, 0],
-  //     [3, 2],
-  //     [3, 3],
-  //     [3, 4],
-  //     [1, 6],
-  //     [2, 6],
-  //     [7, 3],
-  //     [7, 4],
-  //     [7, 5],
-  //     [7, 6],
-  //   ];
-  //   sunkPositions.forEach(([row, col]) => {
-  //     state[row][col].state = SquareState.SHIP_SUNK;
-  //   });
-  //   const missedPosition = [
-  //     [4, 7],
-  //     [5, 2],
-  //     [5, 4],
-  //     [5, 6],
-  //     [6, 3],
-  //     [6, 5],
-  //     [7, 7],
-  //   ];
-  //   missedPosition.forEach(([row, col]) => {
-  //     state[row][col].state = SquareState.MISSED;
-  //   });
-  //   setBoardState(state);
-  // }, []);
 
   const [ships, setShips] = useState<ShipShape[]>([
     [[true, true]],
@@ -89,7 +37,6 @@ export const Gameboard: FunctionComponent = ({}) => {
 
   function calculatePossibleConfigs() {
     let consideredShips = [...ships].filter((ship) => ship.length > 0);
-    // console.log(consideredShips);
 
     const boardStateCopy = boardState.map((row) =>
       row.map((col) => ({ ...col }))
