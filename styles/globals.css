@@ -24,3 +24,13 @@
   transform: rotate(-45deg);
   left: 11px;
 }
+
+.striped {
+  background: repeating-linear-gradient(
+    45deg,
+    hsl(200, 90%, 55%),
+    hsl(200, 90%, 55%) 7px,
+    hsl(200, 90%, 47%) 7px,
+    hsl(200, 90%, 47%) 14px
+  );
+}

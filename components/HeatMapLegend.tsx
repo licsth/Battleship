@@ -13,7 +13,7 @@ export const HeatMapLegend: FunctionComponent = () => {
           }}
           className="text-center text-xs text-white flex items-center justify-center"
         >
-          {(num === 0 && "0") || (num === 200 && "100")}
+          {(num === 0 && "low") || (num === 200 && "high")}
         </div>
       ))}
     </div>

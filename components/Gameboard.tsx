@@ -124,7 +124,11 @@ export const Gameboard: FunctionComponent = ({}) => {
                       boardState[row][col].state === SquareState.SHIP_SUNK &&
                         "bg-slate-600",
                       boardState[row][col].state === SquareState.UNKNOWN &&
-                        "bg-slate-200"
+                        "bg-slate-200",
+                      !!possibleConfigs &&
+                        possibleConfigs[row][col] ===
+                          highestConfigurationCount &&
+                        "striped"
                     )}
                     onClick={() => {
                       const newState = [...boardState];
