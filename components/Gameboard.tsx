@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import React from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { ShipShape } from "../utilities/ship";
@@ -27,6 +27,20 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
     null
   );
+  const highestConfigurationCount = useMemo(() => {
+    if (!possibleConfigs) return 0;
+    return Math.max(
+      ...possibleConfigs.map((row, i) =>
+        Math.max(
+          ...row.map((col, j) =>
+            boardState[i][j].state === SquareState.UNKNOWN ? col : 0
+          )
+        )
+      )
+    );
+  }, [possibleConfigs]);
+
+  console.log(possibleConfigs, highestConfigurationCount);
 
   const stateOrder = [
     SquareState.UNKNOWN,
@@ -118,13 +132,13 @@ export const Gameboard: FunctionComponent = ({}) => {
                 <div
                   className={classNames(
                     "w-10 h-10 rounded inline-flex items-center justify-center",
-                    boardState[row][col].state !== SquareState.SHIP_HIT &&
-                      boardState[row][col].state !== SquareState.SHIP_SUNK &&
+                    (boardState[row][col].state === SquareState.MISSED ||
+                      boardState[row][col].state === SquareState.SHIP_HIT) &&
                       "bg-slate-200",
-                    boardState[row][col].state === SquareState.SHIP_HIT &&
-                      "bg-red-600",
                     boardState[row][col].state === SquareState.SHIP_SUNK &&
-                      "bg-slate-600"
+                      "bg-slate-600",
+                    boardState[row][col].state === SquareState.UNKNOWN &&
+                      "bg-slate-200"
                   )}
                   onClick={() => {
                     const newState = [...boardState];
@@ -135,9 +149,24 @@ export const Gameboard: FunctionComponent = ({}) => {
                       ];
                     setBoardState(newState);
                   }}
+                  style={{
+                    backgroundColor:
+                      boardState[row][col].state === SquareState.UNKNOWN &&
+                      possibleConfigs
+                        ? `hsl(${
+                            (possibleConfigs[row][col] /
+                              (highestConfigurationCount || 1)) *
+                              80 +
+                            20
+                          }, 90%, 50%)`
+                        : undefined,
+                  }}
                 >
                   {boardState[row][col].state === SquareState.MISSED && (
                     <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
+                  )}
+                  {boardState[row][col].state === SquareState.SHIP_HIT && (
+                    <span className="x-mark"> </span>
                   )}
                 </div>
               ))}
@@ -150,22 +179,6 @@ export const Gameboard: FunctionComponent = ({}) => {
         >
           Calculate
         </button>
-        {/* <div className="block">
-          {possibleConfigs &&
-            range(boardSize).map((row) => (
-              <div className="flex flex-row gap-1 mb-1">
-                {range(boardSize).map((col) => (
-                  <div
-                    className={classNames(
-                      "w-10 h-10 rounded inline-flex items-center justify-center"
-                    )}
-                  >
-                    {possibleConfigs[row][col]}
-                  </div>
-                ))}
-              </div>
-            ))}
-        </div> */}
       </div>
     </div>
   );

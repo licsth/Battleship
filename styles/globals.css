@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.x-mark {
+  width: 26px;
+  height: 26px;
+  position: relative;
+}
+.x-mark:after {
+  content: "";
+  height: 26px;
+  border-left: 4px solid rgb(71 85 105);
+  position: absolute;
+  transform: rotate(45deg);
+  left: 11px;
+}
+
+.x-mark:before {
+  content: "";
+  height: 26px;
+  border-left: 4px solid rgb(71 85 105);
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 11px;
+}
