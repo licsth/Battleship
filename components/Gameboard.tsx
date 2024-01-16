@@ -124,8 +124,8 @@ export const Gameboard: FunctionComponent = ({}) => {
           }}
         ></input>
       </div>
-      <div className="grid items-center justify-center content-center flex-grow gap-5">
-        <div className="block">
+      <div className="flex flex-col items-center justify-center content-center flex-grow">
+        <div className="block mb-5">
           {range(boardSize).map((row) => (
             <div className="flex flex-row gap-2 mb-2">
               {range(boardSize).map((col) => (
@@ -156,8 +156,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                         ? `hsl(${
                             (possibleConfigs[row][col] /
                               (highestConfigurationCount || 1)) *
-                              80 +
-                            20
+                            200
                           }, 90%, 50%)`
                         : undefined,
                   }}
@@ -175,9 +174,22 @@ export const Gameboard: FunctionComponent = ({}) => {
         </div>
         <button
           onClick={calculatePossibleConfigs}
-          className="bg-cyan-500 text-white rounded p-2"
+          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44"
         >
           Calculate
+        </button>
+        <button
+          onClick={() => {
+            setBoardState(
+              newGrid(boardSize, boardSize, () => ({
+                state: SquareState.UNKNOWN,
+              }))
+            );
+            setPossibleConfigs(null);
+          }}
+          className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44"
+        >
+          Reset board
         </button>
       </div>
     </div>
