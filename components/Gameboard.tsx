@@ -8,6 +8,7 @@ import { classNames } from "../utilities/classNames";
 import { newGrid } from "../utilities/array";
 import { BoardSizeInputSection } from "./BoardSizeInputSection";
 import { nextSquareState } from "../utilities/nextSquareState";
+import { HeatMapLegend } from "./HeatMapLegend";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(8);
@@ -98,78 +99,83 @@ export const Gameboard: FunctionComponent = ({}) => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-slate-100 p-5 items-center justify-center content-center">
-      <BoardSizeInputSection
-        boardSize={boardSize}
-        setBoardSize={setBoardSize}
-        setBoardState={setBoardState}
-        setPossibleConfigs={setPossibleConfigs}
-      />
-      <div className="flex flex-col items-center justify-center content-center flex-grow">
-        <div className="block mb-5">
-          {range(boardSize).map((row) => (
-            <div className="flex flex-row gap-2 mb-2">
-              {range(boardSize).map((col) => (
-                <div
-                  className={classNames(
-                    "w-10 h-10 rounded inline-flex items-center justify-center",
-                    (boardState[row][col].state === SquareState.MISSED ||
-                      boardState[row][col].state === SquareState.SHIP_HIT) &&
-                      "bg-slate-200",
-                    boardState[row][col].state === SquareState.SHIP_SUNK &&
-                      "bg-slate-600",
-                    boardState[row][col].state === SquareState.UNKNOWN &&
-                      "bg-slate-200"
-                  )}
-                  onClick={() => {
-                    const newState = [...boardState];
-                    newState[row][col].state = nextSquareState(
-                      boardState[row][col].state
-                    );
-                    setBoardState(newState);
-                  }}
-                  style={{
-                    backgroundColor:
+    <div className="grid grid-cols-3 bg-slate-100">
+      <div className="flex items-center pl-20">
+        <HeatMapLegend />
+      </div>
+      <div className="h-screen flex flex-col items-center justify-center content-center p-5">
+        <BoardSizeInputSection
+          boardSize={boardSize}
+          setBoardSize={setBoardSize}
+          setBoardState={setBoardState}
+          setPossibleConfigs={setPossibleConfigs}
+        />
+        <div className="flex flex-col items-center justify-center content-center flex-grow">
+          <div className="block mb-5">
+            {range(boardSize).map((row) => (
+              <div className="flex flex-row gap-2 mb-2">
+                {range(boardSize).map((col) => (
+                  <div
+                    className={classNames(
+                      "w-10 h-10 rounded inline-flex items-center justify-center",
+                      (boardState[row][col].state === SquareState.MISSED ||
+                        boardState[row][col].state === SquareState.SHIP_HIT) &&
+                        "bg-slate-200",
+                      boardState[row][col].state === SquareState.SHIP_SUNK &&
+                        "bg-slate-600",
                       boardState[row][col].state === SquareState.UNKNOWN &&
-                      possibleConfigs
-                        ? `hsl(${
-                            (possibleConfigs[row][col] /
-                              (highestConfigurationCount || 1)) *
-                            200
-                          }, 90%, 50%)`
-                        : undefined,
-                  }}
-                >
-                  {boardState[row][col].state === SquareState.MISSED && (
-                    <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
-                  )}
-                  {boardState[row][col].state === SquareState.SHIP_HIT && (
-                    <span className="x-mark"> </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
+                        "bg-slate-200"
+                    )}
+                    onClick={() => {
+                      const newState = [...boardState];
+                      newState[row][col].state = nextSquareState(
+                        boardState[row][col].state
+                      );
+                      setBoardState(newState);
+                    }}
+                    style={{
+                      backgroundColor:
+                        boardState[row][col].state === SquareState.UNKNOWN &&
+                        possibleConfigs
+                          ? `hsl(${
+                              (possibleConfigs[row][col] /
+                                (highestConfigurationCount || 1)) *
+                              200
+                            }, 90%, 50%)`
+                          : undefined,
+                    }}
+                  >
+                    {boardState[row][col].state === SquareState.MISSED && (
+                      <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
+                    )}
+                    {boardState[row][col].state === SquareState.SHIP_HIT && (
+                      <span className="x-mark"> </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={calculatePossibleConfigs}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44"
+          >
+            Calculate
+          </button>
+          <button
+            onClick={() => {
+              setBoardState(
+                newGrid(boardSize, boardSize, () => ({
+                  state: SquareState.UNKNOWN,
+                }))
+              );
+              setPossibleConfigs(null);
+            }}
+            className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44"
+          >
+            Reset board
+          </button>
         </div>
-        <button
-          onClick={calculatePossibleConfigs}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44"
-        >
-          Calculate
-        </button>
-        <button
-          onClick={() => {
-            setBoardState(
-              newGrid(boardSize, boardSize, () => ({
-                state: SquareState.UNKNOWN,
-              }))
-            );
-            setPossibleConfigs(null);
-          }}
-          className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44"
-        >
-          Reset board
-        </button>
       </div>
     </div>
   );
