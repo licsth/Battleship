@@ -5,23 +5,23 @@ import { ShipShape } from "../utilities/ship";
 import { possibleConfigurations } from "../utilities/bestGuess";
 import { range } from "lodash";
 import { classNames } from "../utilities/classNames";
+import { newGrid } from "../utilities/array";
 
 export const Gameboard: FunctionComponent = ({}) => {
-  const boardSize = 8;
+  const [boardSize, setBoardSize] = useState<number>(8);
+
   const [boardState, setBoardState] = useState<Board>(
-    new Array(boardSize)
-      .fill(new Array(boardSize).fill(0))
-      .map((row) => row.map(() => ({ state: SquareState.UNKNOWN })))
+    newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
   );
 
   const [ships, setShips] = useState<ShipShape[]>([
     [[true, true]],
     [[true, true]],
-    [[true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true, true]],
+    // [[true, true]],
+    // [[true, true, true]],
+    // [[true, true, true]],
+    // [[true, true, true]],
+    // [[true, true, true, true]],
     // [[true, true, true]],
   ]);
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
@@ -89,56 +89,83 @@ export const Gameboard: FunctionComponent = ({}) => {
   }
 
   return (
-    <div className="flex items-center justify-center content-center h-screen bg-slate-50 gap-5">
-      <div className="block">
-        {range(boardSize).map((row) => (
-          <div className="flex flex-row gap-1 mb-1">
-            {range(boardSize).map((col) => (
-              <div
-                className={classNames(
-                  "w-10 h-10 rounded inline-flex items-center justify-center",
-                  boardState[row][col].state !== SquareState.SHIP_HIT &&
-                    boardState[row][col].state !== SquareState.SHIP_SUNK &&
-                    "bg-slate-200",
-                  boardState[row][col].state === SquareState.SHIP_HIT &&
-                    "bg-red-600",
-                  boardState[row][col].state === SquareState.SHIP_SUNK &&
-                    "bg-slate-600"
-                )}
-                onClick={() => {
-                  const newState = [...boardState];
-                  newState[row][col].state =
-                    stateOrder[
-                      (stateOrder.indexOf(boardState[row][col].state) + 1) %
-                        stateOrder.length
-                    ];
-                  setBoardState(newState);
-                }}
-              >
-                {boardState[row][col].state === SquareState.MISSED && (
-                  <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
+    <div className="h-screen flex flex-col bg-slate-100 p-5">
+      <div className="grid justify-center">
+        <label className="block text-xs py-1">Board size</label>
+        <input
+          type="number"
+          className="block shadow-sm p-1 text-center focus:ring-cyan-500 focus:outline-none focus:ring-2 focus:border-transparent rounded"
+          min={1}
+          step={1}
+          value={boardSize}
+          onChange={(e) => {
+            if (!e.target.value) return;
+            const newBoardSize = parseInt(e.target.value);
+            setBoardSize(newBoardSize);
+            setBoardState(
+              newGrid(newBoardSize, newBoardSize, () => ({
+                state: SquareState.UNKNOWN,
+              }))
+            );
+          }}
+        ></input>
       </div>
-      <button onClick={calculatePossibleConfigs}>Go</button>
-      <div className="block">
-        {possibleConfigs &&
-          range(boardSize).map((row) => (
-            <div className="flex flex-row gap-1 mb-1">
+      <div className="grid items-center justify-center content-center flex-grow gap-5">
+        <div className="block">
+          {range(boardSize).map((row) => (
+            <div className="flex flex-row gap-2 mb-2">
               {range(boardSize).map((col) => (
                 <div
                   className={classNames(
-                    "w-10 h-10 rounded inline-flex items-center justify-center"
+                    "w-10 h-10 rounded inline-flex items-center justify-center",
+                    boardState[row][col].state !== SquareState.SHIP_HIT &&
+                      boardState[row][col].state !== SquareState.SHIP_SUNK &&
+                      "bg-slate-200",
+                    boardState[row][col].state === SquareState.SHIP_HIT &&
+                      "bg-red-600",
+                    boardState[row][col].state === SquareState.SHIP_SUNK &&
+                      "bg-slate-600"
                   )}
+                  onClick={() => {
+                    const newState = [...boardState];
+                    newState[row][col].state =
+                      stateOrder[
+                        (stateOrder.indexOf(boardState[row][col].state) + 1) %
+                          stateOrder.length
+                      ];
+                    setBoardState(newState);
+                  }}
                 >
-                  {possibleConfigs[row][col]}
+                  {boardState[row][col].state === SquareState.MISSED && (
+                    <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
+                  )}
                 </div>
               ))}
             </div>
           ))}
+        </div>
+        <button
+          onClick={calculatePossibleConfigs}
+          className="bg-cyan-500 text-white rounded p-2"
+        >
+          Calculate
+        </button>
+        {/* <div className="block">
+          {possibleConfigs &&
+            range(boardSize).map((row) => (
+              <div className="flex flex-row gap-1 mb-1">
+                {range(boardSize).map((col) => (
+                  <div
+                    className={classNames(
+                      "w-10 h-10 rounded inline-flex items-center justify-center"
+                    )}
+                  >
+                    {possibleConfigs[row][col]}
+                  </div>
+                ))}
+              </div>
+            ))}
+        </div> */}
       </div>
     </div>
   );
