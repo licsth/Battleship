@@ -6,6 +6,8 @@ import { possibleConfigurations } from "../utilities/bestGuess";
 import { range } from "lodash";
 import { classNames } from "../utilities/classNames";
 import { newGrid } from "../utilities/array";
+import { BoardSizeInputSection } from "./BoardSizeInputSection";
+import { nextSquareState } from "../utilities/nextSquareState";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(8);
@@ -41,13 +43,6 @@ export const Gameboard: FunctionComponent = ({}) => {
   }, [possibleConfigs]);
 
   console.log(possibleConfigs, highestConfigurationCount);
-
-  const stateOrder = [
-    SquareState.UNKNOWN,
-    SquareState.MISSED,
-    SquareState.SHIP_HIT,
-    SquareState.SHIP_SUNK,
-  ];
 
   function calculatePossibleConfigs() {
     let consideredShips = [...ships].filter((ship) => ship.length > 0);
@@ -104,24 +99,12 @@ export const Gameboard: FunctionComponent = ({}) => {
 
   return (
     <div className="h-screen flex flex-col bg-slate-100 p-5 items-center justify-center content-center">
-      <label className="block text-xs py-1">Board size</label>
-      <input
-        type="number"
-        className="block shadow-sm p-1 text-center focus:ring-cyan-500 focus:outline-none focus:ring-2 focus:border-transparent rounded"
-        min={1}
-        step={1}
-        value={boardSize}
-        onChange={(e) => {
-          if (!e.target.value) return;
-          const newBoardSize = parseInt(e.target.value);
-          setBoardSize(newBoardSize);
-          setBoardState(
-            newGrid(newBoardSize, newBoardSize, () => ({
-              state: SquareState.UNKNOWN,
-            }))
-          );
-        }}
-      ></input>
+      <BoardSizeInputSection
+        boardSize={boardSize}
+        setBoardSize={setBoardSize}
+        setBoardState={setBoardState}
+        setPossibleConfigs={setPossibleConfigs}
+      />
       <div className="flex flex-col items-center justify-center content-center flex-grow">
         <div className="block mb-5">
           {range(boardSize).map((row) => (
@@ -140,11 +123,9 @@ export const Gameboard: FunctionComponent = ({}) => {
                   )}
                   onClick={() => {
                     const newState = [...boardState];
-                    newState[row][col].state =
-                      stateOrder[
-                        (stateOrder.indexOf(boardState[row][col].state) + 1) %
-                          stateOrder.length
-                      ];
+                    newState[row][col].state = nextSquareState(
+                      boardState[row][col].state
+                    );
                     setBoardState(newState);
                   }}
                   style={{
