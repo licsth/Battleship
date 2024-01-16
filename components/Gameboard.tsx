@@ -103,27 +103,25 @@ export const Gameboard: FunctionComponent = ({}) => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-slate-100 p-5">
-      <div className="grid justify-center">
-        <label className="block text-xs py-1">Board size</label>
-        <input
-          type="number"
-          className="block shadow-sm p-1 text-center focus:ring-cyan-500 focus:outline-none focus:ring-2 focus:border-transparent rounded"
-          min={1}
-          step={1}
-          value={boardSize}
-          onChange={(e) => {
-            if (!e.target.value) return;
-            const newBoardSize = parseInt(e.target.value);
-            setBoardSize(newBoardSize);
-            setBoardState(
-              newGrid(newBoardSize, newBoardSize, () => ({
-                state: SquareState.UNKNOWN,
-              }))
-            );
-          }}
-        ></input>
-      </div>
+    <div className="h-screen flex flex-col bg-slate-100 p-5 items-center justify-center content-center">
+      <label className="block text-xs py-1">Board size</label>
+      <input
+        type="number"
+        className="block shadow-sm p-1 text-center focus:ring-cyan-500 focus:outline-none focus:ring-2 focus:border-transparent rounded"
+        min={1}
+        step={1}
+        value={boardSize}
+        onChange={(e) => {
+          if (!e.target.value) return;
+          const newBoardSize = parseInt(e.target.value);
+          setBoardSize(newBoardSize);
+          setBoardState(
+            newGrid(newBoardSize, newBoardSize, () => ({
+              state: SquareState.UNKNOWN,
+            }))
+          );
+        }}
+      ></input>
       <div className="flex flex-col items-center justify-center content-center flex-grow">
         <div className="block mb-5">
           {range(boardSize).map((row) => (
