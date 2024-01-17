@@ -17,7 +17,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
 }) => {
   return (
     <>
-      <label className="block text-xs py-1">Board size</label>
+      <label className="block text-xs py-1 text-cyan-600">Board size</label>
       <input
         type="number"
         className="block shadow-sm p-1 text-center focus:ring-cyan-500 focus:outline-none focus:ring-2 focus:border-transparent rounded w-20"

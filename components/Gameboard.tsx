@@ -9,6 +9,7 @@ import { newGrid } from "../utilities/array";
 import { BoardSizeInputSection } from "./BoardSizeInputSection";
 import { nextSquareState } from "../utilities/nextSquareState";
 import { HeatMapLegend } from "./HeatMapLegend";
+import { ShipDisplay } from "./ShipDisplay";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(8);
@@ -21,7 +22,7 @@ export const Gameboard: FunctionComponent = ({}) => {
     [[true, true]],
     [[true, true]],
     // [[true, true]],
-    // [[true, true, true]],
+    [[true, true, true]],
     // [[true, true, true]],
     // [[true, true, true]],
     // [[true, true, true, true]],
@@ -46,6 +47,8 @@ export const Gameboard: FunctionComponent = ({}) => {
   console.log(possibleConfigs, highestConfigurationCount);
 
   function calculatePossibleConfigs() {
+    // TODO remove ships from consideration set on board state edit & display in ship display
+    // TODO check equality of ship shape instead of just length
     let consideredShips = [...ships].filter((ship) => ship.length > 0);
 
     const boardStateCopy = boardState.map((row) =>
@@ -177,11 +180,14 @@ export const Gameboard: FunctionComponent = ({}) => {
               );
               setPossibleConfigs(null);
             }}
-            className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44 shadow-sm"
+            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-44 shadow-sm"
           >
             Reset board
           </button>
         </div>
+      </div>
+      <div className="flex items-center justify-center">
+        <ShipDisplay ships={ships} setShips={setShips} />
       </div>
     </div>
   );

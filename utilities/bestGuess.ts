@@ -2,11 +2,11 @@ import { Board, SquareState } from "./boardState";
 import { Orientation, ShipShape } from "./ship";
 
 export function possibleConfigurations(boardState: Board, ships: ShipShape[]): number[][] {
+  // TODO recursively give placed ships as argument
   if (ships.length === 0) {
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
     }
-    // if (Math.random() < 0.5) console.log(boardState.map(row => row.map(square => square.state === SquareState.SHIP_SUNK ? 1 : 0)))
     return boardState.map(row => row.map(square => square.state === SquareState.SHIP_SUNK ? 1 : 0))
   }
   const ship = ships.pop();
@@ -15,6 +15,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
   const shipIsSymmetrical = transposedShip.every((row, i) => row.length === ship[i].length && row.every((square, j) => square === ship[i][j]));
 
   const configurations = boardState.map(row => row.map(_ => 0));
+  // TODO only check after last placed ship of same size
   for (let y = 0; y < boardState.length; y++) {
     for (let x = 0; x < boardState[0].length; x++) {
       for (let orientation of [Orientation.HORIZONTAL, Orientation.VERTICAL]) {
@@ -55,6 +56,7 @@ function isShipPlacementPossible(boardState: Board, ship: ShipShape, x: number, 
       if ((boardState[y + i][x + j].state === SquareState.SHIP_SUNK) || (boardState[y + i][x + j].state === SquareState.MISSED)) {
         return false;
       }
+      // TODO mark fields as missed instead
       // neighbor in any direction with ship sunk
       for (let k = -1; k <= 1; k++) {
         for (let l = -1; l <= 1; l++) {
