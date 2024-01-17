@@ -12,7 +12,7 @@ import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
 
 export const Gameboard: FunctionComponent = ({}) => {
-  const [boardSize, setBoardSize] = useState<number>(8);
+  const [boardSize, setBoardSize] = useState<number>(5);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -21,12 +21,7 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [ships, setShips] = useState<ShipShape[]>([
     [[true, true]],
     [[true, true]],
-    // [[true, true]],
     [[true, true, true]],
-    // [[true, true, true]],
-    // [[true, true, true]],
-    // [[true, true, true, true]],
-    // [[true, true, true]],
   ]);
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
     null
