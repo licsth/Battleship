@@ -11,7 +11,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
   function addToShip(shipIndex: number, row: number, col: number) {
     let ship = ships[shipIndex];
     if (row < 0) {
-      ship = [...new Array(ship[0].length).fill(false), ...ship];
+      ship = [new Array(ship[0].length).fill(false), ...ship];
       row = 0;
     }
     if (col < 0) {
@@ -19,7 +19,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
       col = 0;
     }
     if (row >= ship.length) {
-      ship = [...ship, ...new Array(ship[0].length).fill(false)];
+      ship = [...ship, new Array(ship[0].length).fill(false)];
     }
     if (col >= ship[0].length) {
       ship = ship.map((row) => [...row, false]);
@@ -63,7 +63,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
                             "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
                           canAddVertical &&
                             "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
-                          "w-9 h-9"
+                          "w-7 h-7 select-none"
                         )}
                         onClick={() => {
                           if (canAddHorizontal || canAddVertical) {
@@ -82,7 +82,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
           <div>
             <button
               onClick={() => deleteShip(shipIndex)}
-              className="bg-red-500 hover:bg-red-600 text-white rounded py-2 px-4 mb-2 shadow-sm caps block"
+              className="bg-red-500 hover:bg-red-600 text-white rounded py-1.5 px-3 mb-2 shadow-sm caps block text-sm"
             >
               Delete
             </button>
