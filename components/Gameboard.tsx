@@ -84,7 +84,6 @@ export const Gameboard: FunctionComponent = ({}) => {
               consideredShips[i].length === 1 &&
               consideredShips[i][0].length === lengthCount
             ) {
-              console.log("splice", lengthCount, row, col);
               consideredShips = consideredShips.filter(
                 (_, index) => index !== i
               );
@@ -113,11 +112,12 @@ export const Gameboard: FunctionComponent = ({}) => {
         <div className="flex flex-col items-center justify-center content-center flex-grow">
           <div className="block mb-5">
             {range(boardSize).map((row) => (
-              <div className="flex flex-row gap-2 mb-2">
+              <div className="flex flex-row gap-2 mb-2" key={"row-" + row}>
                 {range(boardSize).map((col) => (
                   <div
+                    key={"row-" + row + "-col-" + col}
                     className={classNames(
-                      "w-10 h-10 rounded inline-flex items-center justify-center",
+                      "w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer",
                       (boardState[row][col].state === SquareState.MISSED ||
                         boardState[row][col].state === SquareState.SHIP_HIT) &&
                         "bg-slate-200",
@@ -128,6 +128,8 @@ export const Gameboard: FunctionComponent = ({}) => {
                       !!possibleConfigs &&
                         possibleConfigs[row][col] ===
                           highestConfigurationCount &&
+                        boardState[row][col].state === SquareState.UNKNOWN &&
+                        highestConfigurationCount != 0 &&
                         "striped"
                     )}
                     onClick={() => {
@@ -162,7 +164,7 @@ export const Gameboard: FunctionComponent = ({}) => {
           </div>
           <button
             onClick={calculatePossibleConfigs}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44 shadow-sm"
           >
             Calculate
           </button>
@@ -175,7 +177,7 @@ export const Gameboard: FunctionComponent = ({}) => {
               );
               setPossibleConfigs(null);
             }}
-            className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44"
+            className="bg-purple-500 hover:bg-purple-600 text-white rounded p-2 text-xs w-44 shadow-sm"
           >
             Reset board
           </button>

@@ -20,6 +20,7 @@ export const HeatMapLegend: FunctionComponent = () => {
             height: 25,
             background: `hsl(${num}, 90%, 50%)`,
           }}
+          key={"legend-" + num}
           className="text-center text-xs text-white flex items-center justify-center"
         >
           {(num === 0 && "low") || (num === 200 && "high")}
