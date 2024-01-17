@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { ShipShape } from "../utilities/ship";
 import { classNames } from "../utilities/classNames";
 import { addSquareToShip } from "../utilities/addSquareToShip";
-import { squareIsEmptyWithinShip } from "../utilities/squareIsEmptyWithinShip";
 
 interface Props {
   ships: ShipShape[];
@@ -18,18 +17,6 @@ export const ShipDisplay: FunctionComponent<Props> = ({
   function addToShip(shipIndex: number, row: number, col: number) {
     let ship = ships[shipIndex];
     ship = addSquareToShip(ship, row, col);
-    // while (true) {
-    //   const rowIndex = ship.findIndex((row, rowIndex) =>
-    //     row.some((_, colIndex) =>
-    //       squareIsEmptyWithinShip(ship, rowIndex, colIndex)
-    //     )
-    //   );
-    //   if (rowIndex === -1) break;
-    //   const colIndex = ship[rowIndex].findIndex((_, colIndex) =>
-    //     squareIsEmptyWithinShip(ship, rowIndex, colIndex)
-    //   );
-    //   ship = addSquareToShip(ship, rowIndex, colIndex);
-    // }
     setShips([
       ...ships.slice(0, shipIndex),
       ship,
