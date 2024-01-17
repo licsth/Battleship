@@ -1,6 +1,8 @@
 import { FunctionComponent } from "react";
 import { ShipShape } from "../utilities/ship";
 import { classNames } from "../utilities/classNames";
+import { addSquareToShip } from "../utilities/addSquareToShip";
+import { squareIsEmptyWithinShip } from "../utilities/squareIsEmptyWithinShip";
 
 interface Props {
   ships: ShipShape[];
@@ -15,21 +17,19 @@ export const ShipDisplay: FunctionComponent<Props> = ({
 }) => {
   function addToShip(shipIndex: number, row: number, col: number) {
     let ship = ships[shipIndex];
-    if (row < 0) {
-      ship = [new Array(ship[0].length).fill(false), ...ship];
-      row = 0;
-    }
-    if (col < 0) {
-      ship = ship.map((row) => [false, ...row]);
-      col = 0;
-    }
-    if (row >= ship.length) {
-      ship = [...ship, new Array(ship[0].length).fill(false)];
-    }
-    if (col >= ship[0].length) {
-      ship = ship.map((row) => [...row, false]);
-    }
-    ship[row][col] = true;
+    ship = addSquareToShip(ship, row, col);
+    // while (true) {
+    //   const rowIndex = ship.findIndex((row, rowIndex) =>
+    //     row.some((_, colIndex) =>
+    //       squareIsEmptyWithinShip(ship, rowIndex, colIndex)
+    //     )
+    //   );
+    //   if (rowIndex === -1) break;
+    //   const colIndex = ship[rowIndex].findIndex((_, colIndex) =>
+    //     squareIsEmptyWithinShip(ship, rowIndex, colIndex)
+    //   );
+    //   ship = addSquareToShip(ship, rowIndex, colIndex);
+    // }
     setShips([
       ...ships.slice(0, shipIndex),
       ship,
@@ -45,7 +45,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
     <div className="">
       <p className="mb-6 mt-4 text-slate-600 text-xl text-center">Ships</p>
       {ships.map((ship, shipIndex) => (
-        <div className="mb-0 flex items-center gap-7">
+        <div className="mb-3 flex items-center gap-7">
           <div>
             {[
               new Array(ship[0].length).fill(false),
@@ -56,7 +56,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                 {[false, ...row, false].map((col, j) => {
                   const canAddHorizontal = !col && (row[j] || row[j - 2]);
                   const canAddVertical =
-                    false && !col && (ship[i]?.[j - 1] || ship[i - 2]?.[j - 1]); // todo implement ships that arent 1*x
+                    !col && (ship[i]?.[j - 1] || ship[i - 2]?.[j - 1]); // todo implement ships that arent 1*x
                   return (
                     <>
                       <div

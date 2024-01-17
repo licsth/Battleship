@@ -11,6 +11,7 @@ import { nextSquareState } from "../utilities/nextSquareState";
 import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
 import { shipShapesEqual } from "../utilities/shipShapesEqual";
+import { findSunkenShip } from "../utilities/findSunkenShip";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
@@ -31,33 +32,14 @@ export const Gameboard: FunctionComponent = ({}) => {
     const boardStateCopy = boardState.map((row) =>
       row.map((col) => ({ ...col }))
     );
-    let lengthCount = 0;
-    for (let row = 0; row < boardStateCopy.length; row++) {
-      for (let col = 0; col < boardStateCopy[row].length; col++) {
-        lengthCount = 0;
-        while (
-          col + lengthCount < boardStateCopy[row].length &&
-          boardStateCopy[row][col + lengthCount].state === SquareState.SHIP_SUNK
-        ) {
-          boardStateCopy[row][col + lengthCount].state = SquareState.MISSED;
-          lengthCount++;
-        }
-        while (
-          row + lengthCount < boardStateCopy.length &&
-          boardStateCopy[row + lengthCount][col].state === SquareState.SHIP_SUNK
-        ) {
-          boardStateCopy[row + lengthCount][col].state = SquareState.MISSED;
-          lengthCount++;
-        }
-        if (lengthCount > 0) {
-          const shipIndex = ships.findIndex(
-            (ship, index) =>
-              indices.includes(index) &&
-              shipShapesEqual(ship, [new Array(lengthCount).fill(true)])
-          );
-          indices = indices.filter((index) => index !== shipIndex);
-        }
-      }
+    let sunkenShip: ShipShape | null = null;
+    while ((sunkenShip = findSunkenShip(boardStateCopy)) != null) {
+      const shipIndex = ships.findIndex(
+        (ship, index) =>
+          indices.includes(index) &&
+          shipShapesEqual(sunkenShip as ShipShape, ship)
+      );
+      indices = indices.filter((index) => index !== shipIndex);
     }
     return indices;
   }, [ships, boardState]);
