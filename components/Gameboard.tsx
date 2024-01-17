@@ -24,28 +24,9 @@ export const Gameboard: FunctionComponent = ({}) => {
     [[true, true]],
     [[true, true, true]],
   ]);
-  const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
-    null
-  );
-  const highestConfigurationCount = useMemo(() => {
-    if (!possibleConfigs) return 0;
-    return Math.max(
-      ...possibleConfigs.map((row, i) =>
-        Math.max(
-          ...row.map((col, j) =>
-            boardState[i][j].state === SquareState.UNKNOWN ? col : 0
-          )
-        )
-      )
-    );
-  }, [possibleConfigs]);
 
-  console.log(possibleConfigs, highestConfigurationCount);
-
-  function calculatePossibleConfigs() {
-    // TODO remove ships from consideration set on board state edit & display in ship display
-    // TODO check equality of ship shape instead of just length
-    let consideredShips = [...ships].filter((ship) => ship.length > 0);
+  const unsunkenShipIndices = useMemo(() => {
+    let indices = range(ships.length);
 
     const boardStateCopy = boardState.map((row) =>
       row.map((col) => ({ ...col }))
@@ -69,17 +50,41 @@ export const Gameboard: FunctionComponent = ({}) => {
           lengthCount++;
         }
         if (lengthCount > 0) {
-          const shipIndex = consideredShips.findIndex((ship) =>
-            shipShapesEqual(ship, [new Array(lengthCount).fill(true)])
+          const shipIndex = ships.findIndex(
+            (ship, index) =>
+              indices.includes(index) &&
+              shipShapesEqual(ship, [new Array(lengthCount).fill(true)])
           );
-          consideredShips = consideredShips.filter(
-            (_, index) => index !== shipIndex
-          );
+          indices = indices.filter((index) => index !== shipIndex);
         }
       }
     }
-    console.log(consideredShips);
-    setPossibleConfigs(possibleConfigurations(boardState, consideredShips));
+    return indices;
+  }, [ships, boardState]);
+
+  const unsunkenShips = useMemo(() => {
+    return ships.filter((_, index) => unsunkenShipIndices.includes(index));
+  }, [unsunkenShipIndices]);
+
+  const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
+    null
+  );
+  const highestConfigurationCount = useMemo(() => {
+    if (!possibleConfigs) return 0;
+    return Math.max(
+      ...possibleConfigs.map((row, i) =>
+        Math.max(
+          ...row.map((col, j) =>
+            boardState[i][j].state === SquareState.UNKNOWN ? col : 0
+          )
+        )
+      )
+    );
+  }, [possibleConfigs]);
+
+  function calculatePossibleConfigs() {
+    // TODO check equality of ship shape instead of just length
+    setPossibleConfigs(possibleConfigurations(boardState, unsunkenShips));
   }
 
   return (
@@ -169,7 +174,11 @@ export const Gameboard: FunctionComponent = ({}) => {
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <ShipDisplay ships={ships} setShips={setShips} />
+        <ShipDisplay
+          ships={ships}
+          setShips={setShips}
+          unsunkenShipIndices={unsunkenShipIndices}
+        />
       </div>
     </div>
   );

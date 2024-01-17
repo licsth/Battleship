@@ -5,9 +5,14 @@ import { classNames } from "../utilities/classNames";
 interface Props {
   ships: ShipShape[];
   setShips: (ships: ShipShape[]) => void;
+  unsunkenShipIndices: number[];
 }
 
-export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
+export const ShipDisplay: FunctionComponent<Props> = ({
+  ships,
+  setShips,
+  unsunkenShipIndices,
+}) => {
   function addToShip(shipIndex: number, row: number, col: number) {
     let ship = ships[shipIndex];
     if (row < 0) {
@@ -58,7 +63,10 @@ export const ShipDisplay: FunctionComponent<Props> = ({ ships, setShips }) => {
                         key={`row-${i}-col-${j}`}
                         className={classNames(
                           "rounded inline-flex items-center mr-1 text-center justify-center align-middle",
-                          col && "bg-purple-400",
+                          col &&
+                            (unsunkenShipIndices.includes(shipIndex)
+                              ? "bg-purple-400"
+                              : "bg-slate-600"),
                           canAddHorizontal &&
                             "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
                           canAddVertical &&
