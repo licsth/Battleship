@@ -10,6 +10,7 @@ import { BoardSizeInputSection } from "./BoardSizeInputSection";
 import { nextSquareState } from "../utilities/nextSquareState";
 import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
+import { shipShapesEqual } from "../utilities/shipShapesEqual";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
@@ -68,26 +69,12 @@ export const Gameboard: FunctionComponent = ({}) => {
           lengthCount++;
         }
         if (lengthCount > 0) {
-          // console.log(boardStateCopy.map((row) => row.map((col) => col.state)));
-          for (let i = 0; i < consideredShips.length; i++) {
-            if (
-              consideredShips[i].length === lengthCount &&
-              consideredShips[i][0].length === 1
-            ) {
-              consideredShips = consideredShips.filter(
-                (_, index) => index !== i
-              );
-              break;
-            } else if (
-              consideredShips[i].length === 1 &&
-              consideredShips[i][0].length === lengthCount
-            ) {
-              consideredShips = consideredShips.filter(
-                (_, index) => index !== i
-              );
-              break;
-            }
-          }
+          const shipIndex = consideredShips.findIndex((ship) =>
+            shipShapesEqual(ship, [new Array(lengthCount).fill(true)])
+          );
+          consideredShips = consideredShips.filter(
+            (_, index) => index !== shipIndex
+          );
         }
       }
     }

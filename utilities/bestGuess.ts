@@ -1,4 +1,5 @@
 import { Board, SquareState } from "./boardState";
+import { rotateShip } from "./rotateShip";
 import { Orientation, ShipShape } from "./ship";
 
 export function possibleConfigurations(boardState: Board, ships: ShipShape[]): number[][] {
@@ -11,7 +12,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
   }
   const ship = ships.pop();
   if (!ship) return boardState.map(row => row.map(_ => 0))
-  const transposedShip = ship[0].map((_, i) => ship.map(row => row[i]))
+  const transposedShip = rotateShip(ship)
   const shipIsSymmetrical = transposedShip.every((row, i) => row.length === ship[i].length && row.every((square, j) => square === ship[i][j]));
 
   const configurations = boardState.map(row => row.map(_ => 0));
