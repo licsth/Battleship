@@ -43,7 +43,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                 {[false, ...row, false].map((col, j) => {
                   const canAddHorizontal = !col && (row[j] || row[j - 2]);
                   const canAddVertical =
-                    !col && (ship[i]?.[j - 1] || ship[i - 2]?.[j - 1]); // todo implement ships that arent 1*x
+                    !col && (ship[i]?.[j - 1] || ship[i - 2]?.[j - 1]);
                   return (
                     <>
                       <div

@@ -65,7 +65,6 @@ export const Gameboard: FunctionComponent = ({}) => {
   }, [possibleConfigs]);
 
   function calculatePossibleConfigs() {
-    // TODO check equality of ship shape instead of just length
     setPossibleConfigs(possibleConfigurations(boardState, unsunkenShips));
   }
 
