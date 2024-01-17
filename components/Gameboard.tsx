@@ -98,7 +98,7 @@ export const Gameboard: FunctionComponent = ({}) => {
   }
 
   return (
-    <div className="grid grid-cols-3 bg-slate-100">
+    <div className="grid grid-cols-3 bg-slate-100 font-mono">
       <div className="flex items-center pl-20">
         <HeatMapLegend />
       </div>
@@ -164,7 +164,7 @@ export const Gameboard: FunctionComponent = ({}) => {
           </div>
           <button
             onClick={calculatePossibleConfigs}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44 shadow-sm"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44 shadow-sm caps"
           >
             Calculate
           </button>

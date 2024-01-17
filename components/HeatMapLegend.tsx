@@ -6,7 +6,7 @@ export const HeatMapLegend: FunctionComponent = () => {
     <div>
       <div
         style={{
-          width: 50,
+          width: 55,
           height: 25,
         }}
         className="text-center text-xs text-white flex items-center justify-center striped"
@@ -16,7 +16,7 @@ export const HeatMapLegend: FunctionComponent = () => {
       {range(200, -10, -10).map((num) => (
         <div
           style={{
-            width: 50,
+            width: 55,
             height: 25,
             background: `hsl(${num}, 90%, 50%)`,
           }}
