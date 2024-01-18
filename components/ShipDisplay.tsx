@@ -39,7 +39,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
               ...ship,
               new Array(ship[0].length).fill(false),
             ].map((row, i) => (
-              <div key={`row-${i}`} className="mb-1">
+              <div key={`row-${i}`} className="mb-[3px]">
                 {[false, ...row, false].map((col, j) => {
                   const canAddHorizontal = !col && (row[j] || row[j - 2]);
                   const canAddVertical =
@@ -48,7 +48,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                     <div
                       key={`row-${i}-col-${j}`}
                       className={classNames(
-                        "rounded inline-flex items-center mr-1 text-center justify-center align-middle",
+                        "rounded inline-flex items-center mr-[3px] text-center justify-center align-middle",
                         col &&
                           (unsunkenShipIndices.includes(shipIndex)
                             ? "bg-purple-400"
@@ -57,7 +57,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                           "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
                         canAddVertical &&
                           "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
-                        "w-7 h-7 select-none"
+                        "w-6 h-6 select-none"
                       )}
                       onClick={() => {
                         if (canAddHorizontal || canAddVertical) {
