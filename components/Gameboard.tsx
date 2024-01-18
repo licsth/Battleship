@@ -10,8 +10,12 @@ import { BoardSizeInputSection } from "./BoardSizeInputSection";
 import { nextSquareState } from "../utilities/nextSquareState";
 import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
-import { shipShapesEqual } from "../utilities/shipShapesEqual";
+import {
+  shapesEqualWithoutRotation,
+  shipShapesEqual,
+} from "../utilities/shipShapesEqual";
 import { findSunkenShip } from "../utilities/findSunkenShip";
+import { rotateShip } from "../utilities/rotateShip";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
@@ -66,11 +70,24 @@ export const Gameboard: FunctionComponent = ({}) => {
   }, [possibleConfigs]);
 
   function calculatePossibleConfigs() {
-    // const time = Date.now();
+    const time = Date.now();
     setPossibleConfigs(
-      possibleConfigurations(boardState, [...unsunkenShips], [], true)
+      possibleConfigurations(
+        boardState,
+        unsunkenShips.map((ship) => {
+          const transposed = rotateShip(ship);
+          return {
+            normal: [...ship],
+            transposed: shapesEqualWithoutRotation(ship, transposed)
+              ? null
+              : transposed,
+          };
+        }),
+        [],
+        true
+      )
     );
-    // console.log(`took ${Date.now() - time}ms`);
+    console.log(`took ${Date.now() - time}ms`);
   }
 
   return (

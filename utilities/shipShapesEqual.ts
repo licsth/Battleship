@@ -11,7 +11,7 @@ export function shipShapesEqual(ship1: ShipShape, ship2: ShipShape) {
   return false;
 }
 
-function shapesEqualWithoutRotation(ship1: ShipShape, ship2: ShipShape) {
+export function shapesEqualWithoutRotation(ship1: ShipShape, ship2: ShipShape) {
   if (ship1.length !== ship2.length) {
     return false;
   }

@@ -1,34 +1,38 @@
 import { Board, SquareState } from "./boardState";
-import { rotateShip } from "./rotateShip";
 import { Orientation, Ship, ShipShape } from "./ship";
 import { shipShapesEqual } from "./shipShapesEqual";
 
 let counter = 0;
+let validConfigCounter = 0;
 
-export function possibleConfigurations(boardState: Board, ships: ShipShape[], placedShips: Ship[], log = false): number[][] {
+interface ShipShapeVariant {
+  normal: ShipShape;
+  transposed: ShipShape | null;
+}
+
+export function possibleConfigurations(boardState: Board, ships: ShipShapeVariant[], placedShips: Ship[], log = false): number[][] {
   counter++;
   if (ships.length === 0) {
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
     }
+    validConfigCounter++
     return boardState.map(row => row.map(square => square.state === SquareState.SHIP_SUNK ? 1 : 0))
   }
   const ship = ships.pop();
   if (!ship) return boardState.map(row => row.map(_ => 0))
-  const transposedShip = rotateShip(ship)
-  const shipIsSymmetrical = transposedShip.every((row, i) => row.length === ship[i].length && row.every((square, j) => square === ship[i][j]));
 
   const configurations = boardState.map(row => row.map(_ => 0));
   // only place ship after last placed ship with same shape
-  const lastPlacedShipWithSameShape = placedShips.find(placedShip => shipShapesEqual(placedShip.shape, ship));
+  const lastPlacedShipWithSameShape = placedShips.find(placedShip => shipShapesEqual(placedShip.shape, ship.normal));
   const startY = (lastPlacedShipWithSameShape?.position[1] ?? 0);
   for (let y = startY; y < boardState.length; y++) {
     for (let x = ((y === startY && lastPlacedShipWithSameShape?.position[0]) || -1) + 1; x < boardState[0].length; x++) {
       shipPlacementLoop: for (let orientation of [Orientation.HORIZONTAL, Orientation.VERTICAL]) {
-        if (shipIsSymmetrical && orientation === Orientation.VERTICAL) {
+        let correctShip: ShipShape | null = orientation === Orientation.VERTICAL ? ship.transposed : ship.normal
+        if (correctShip == null) {
           continue;
         }
-        let correctShip = orientation === Orientation.VERTICAL ? transposedShip : ship
         if (isShipPlacementPossible(boardState, correctShip, x, y)) {
           const newBoardState = boardState.map(row => row.map(square => ({ ...square })));
           for (let i = 0; i < correctShip.length; i++) {
@@ -65,6 +69,8 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[], pl
   if (log) {
     console.log('Considered states: ', counter)
     counter = 0;
+    console.log('Valid states: ', validConfigCounter)
+    validConfigCounter = 0;
   }
   return configurations
 }
