@@ -57,7 +57,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShapeVarian
               }
             }
           }
-          if (allHit) continue shipPlacementLoop;
+          if (allHit) continue shipPlacementLoop; // ships cannot be completely hit but not sunk yet
           // add possibleConfigurations(newBoardState, ships) to configurations component-wise
           const newConfigurations = possibleConfigurations(newBoardState, [...ships], [{ shape: correctShip, position: [x, y], orientation }, ...placedShips,]);
           for (let i = 0; i < newConfigurations.length; i++) {
