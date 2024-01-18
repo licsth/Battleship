@@ -11,8 +11,8 @@ interface ShipShapeVariant {
 }
 
 export function possibleConfigurations(boardState: Board, ships: ShipShapeVariant[], placedShips: Ship[], log = false): number[][] {
-  counter++;
   if (ships.length === 0) {
+    counter++;
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
     }
@@ -35,9 +35,11 @@ export function possibleConfigurations(boardState: Board, ships: ShipShapeVarian
         }
         if (isShipPlacementPossible(boardState, correctShip, x, y)) {
           const newBoardState = boardState.map(row => row.map(square => ({ ...square })));
+          let allHit = true;
           for (let i = 0; i < correctShip.length; i++) {
             for (let j = 0; j < correctShip[i].length; j++) {
               if (correctShip[i][j]) {
+                allHit &&= newBoardState[y + i][x + j].state === SquareState.SHIP_HIT;
                 newBoardState[y + i][x + j].state = SquareState.SHIP_SUNK;
                 // mark neighbors that don't belong to the ship as missed & check that none are hits
                 for (let k = -1; k <= 1; k++) {
@@ -55,6 +57,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShapeVarian
               }
             }
           }
+          if (allHit) continue shipPlacementLoop;
           // add possibleConfigurations(newBoardState, ships) to configurations component-wise
           const newConfigurations = possibleConfigurations(newBoardState, [...ships], [{ shape: correctShip, position: [x, y], orientation }, ...placedShips,]);
           for (let i = 0; i < newConfigurations.length; i++) {
