@@ -19,7 +19,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
   // TODO only check after last placed ship of same size
   for (let y = 0; y < boardState.length; y++) {
     for (let x = 0; x < boardState[0].length; x++) {
-      for (let orientation of [Orientation.HORIZONTAL, Orientation.VERTICAL]) {
+      shipPlacementLoop: for (let orientation of [Orientation.HORIZONTAL, Orientation.VERTICAL]) {
         if (shipIsSymmetrical && orientation === Orientation.VERTICAL) {
           continue;
         }
@@ -30,6 +30,19 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
             for (let j = 0; j < correctShip[i].length; j++) {
               if (correctShip[i][j]) {
                 newBoardState[y + i][x + j].state = SquareState.SHIP_SUNK;
+                // mark neighbors that don't belong to the ship as missed & check that none are hits
+                for (let k = -1; k <= 1; k++) {
+                  for (let l = -1; l <= 1; l++) {
+                    if (k === 0 && l === 0) continue;
+                    if (y + i + k < 0 || y + i + k >= boardState.length || x + j + l < 0 || x + j + l >= boardState[0].length) continue;
+                    if (!correctShip[i + k]?.[j + l]) {
+                      if (newBoardState[y + i + k][x + j + l].state === SquareState.SHIP_HIT) { // this speeds up computation if there are some hits on the board
+                        continue shipPlacementLoop
+                      }
+                      newBoardState[y + i + k][x + j + l].state = SquareState.MISSED;
+                    }
+                  }
+                }
               }
             }
           }
@@ -56,17 +69,6 @@ function isShipPlacementPossible(boardState: Board, ship: ShipShape, x: number, 
       if (!ship[i][j]) continue;
       if ((boardState[y + i][x + j].state === SquareState.SHIP_SUNK) || (boardState[y + i][x + j].state === SquareState.MISSED)) {
         return false;
-      }
-      // TODO mark fields as missed instead
-      // neighbor in any direction with ship sunk
-      for (let k = -1; k <= 1; k++) {
-        for (let l = -1; l <= 1; l++) {
-          if (k === 0 && l === 0) continue;
-          if (y + i + k < 0 || y + i + k >= boardState.length || x + j + l < 0 || x + j + l >= boardState[0].length) continue;
-          if (boardState[y + i + k][x + j + l].state === SquareState.SHIP_SUNK) {
-            return false;
-          }
-        }
       }
     }
   }

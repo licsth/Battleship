@@ -66,7 +66,9 @@ export const Gameboard: FunctionComponent = ({}) => {
   }, [possibleConfigs]);
 
   function calculatePossibleConfigs() {
-    setPossibleConfigs(possibleConfigurations(boardState, unsunkenShips));
+    const time = Date.now();
+    setPossibleConfigs(possibleConfigurations(boardState, [...unsunkenShips]));
+    console.log(`took ${Date.now() - time}ms`);
   }
 
   return (
