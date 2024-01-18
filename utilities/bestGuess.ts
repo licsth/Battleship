@@ -1,9 +1,9 @@
 import { Board, SquareState } from "./boardState";
 import { rotateShip } from "./rotateShip";
-import { Orientation, ShipShape } from "./ship";
+import { Orientation, Ship, ShipShape } from "./ship";
+import { shipShapesEqual } from "./shipShapesEqual";
 
-export function possibleConfigurations(boardState: Board, ships: ShipShape[]): number[][] {
-  // TODO recursively give placed ships as argument
+export function possibleConfigurations(boardState: Board, ships: ShipShape[], placedShips: Ship[]): number[][] {
   if (ships.length === 0) {
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
@@ -16,9 +16,11 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
   const shipIsSymmetrical = transposedShip.every((row, i) => row.length === ship[i].length && row.every((square, j) => square === ship[i][j]));
 
   const configurations = boardState.map(row => row.map(_ => 0));
-  // TODO only check after last placed ship of same size
-  for (let y = 0; y < boardState.length; y++) {
-    for (let x = 0; x < boardState[0].length; x++) {
+  // only place ship after last placed ship with same shape
+  const lastPlacedShipWithSameShape = placedShips.find(placedShip => shipShapesEqual(placedShip.shape, ship));
+  const startY = (lastPlacedShipWithSameShape?.position[1] ?? 0);
+  for (let y = startY; y < boardState.length; y++) {
+    for (let x = ((y === startY && lastPlacedShipWithSameShape?.position[0]) || -1) + 1; x < boardState[0].length; x++) {
       shipPlacementLoop: for (let orientation of [Orientation.HORIZONTAL, Orientation.VERTICAL]) {
         if (shipIsSymmetrical && orientation === Orientation.VERTICAL) {
           continue;
@@ -47,7 +49,7 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[]): n
             }
           }
           // add possibleConfigurations(newBoardState, ships) to configurations component-wise
-          const newConfigurations = possibleConfigurations(newBoardState, [...ships]);
+          const newConfigurations = possibleConfigurations(newBoardState, [...ships], [{ shape: correctShip, position: [x, y], orientation }, ...placedShips,]);
           for (let i = 0; i < newConfigurations.length; i++) {
             for (let j = 0; j < newConfigurations[0].length; j++) {
               configurations[i][j] += newConfigurations[i][j];
