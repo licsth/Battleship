@@ -3,7 +3,10 @@ import { rotateShip } from "./rotateShip";
 import { Orientation, Ship, ShipShape } from "./ship";
 import { shipShapesEqual } from "./shipShapesEqual";
 
-export function possibleConfigurations(boardState: Board, ships: ShipShape[], placedShips: Ship[]): number[][] {
+let counter = 0;
+
+export function possibleConfigurations(boardState: Board, ships: ShipShape[], placedShips: Ship[], log = false): number[][] {
+  counter++;
   if (ships.length === 0) {
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
@@ -58,6 +61,10 @@ export function possibleConfigurations(boardState: Board, ships: ShipShape[], pl
         }
       }
     }
+  }
+  if (log) {
+    console.log('Considered states: ', counter)
+    counter = 0;
   }
   return configurations
 }
