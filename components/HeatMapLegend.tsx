@@ -19,7 +19,7 @@ export const HeatMapLegend: FunctionComponent = () => {
             style={{
               width: 55,
               height: 25,
-              background: `hsl(${num}, 90%, 50%)`,
+              background: `hsl(${num}, 90%, 48%)`,
             }}
             key={"legend-" + num}
             className="text-center text-xs text-white flex items-center justify-center"

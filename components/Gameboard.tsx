@@ -15,6 +15,7 @@ import { findSunkenShip } from "../utilities/findSunkenShip";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
+  const [showNumbers, setShowNumbers] = useState(false);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -79,6 +80,8 @@ export const Gameboard: FunctionComponent = ({}) => {
           setBoardSize={setBoardSize}
           setBoardState={setBoardState}
           setPossibleConfigs={setPossibleConfigs}
+          showNumbers={showNumbers}
+          setShowNumbers={setShowNumbers}
         />
         <div className="flex flex-col items-center justify-center content-center flex-grow">
           <div className="block mb-5">
@@ -95,7 +98,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                       boardState[row][col].state === SquareState.SHIP_SUNK &&
                         "bg-slate-600",
                       boardState[row][col].state === SquareState.UNKNOWN &&
-                        "bg-slate-200",
+                        "bg-slate-200 p-1",
                       !!possibleConfigs &&
                         possibleConfigs[row][col] ===
                           highestConfigurationCount &&
@@ -118,7 +121,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                               (possibleConfigs[row][col] /
                                 (highestConfigurationCount || 1)) *
                               200
-                            }, 90%, 50%)`
+                            }, 90%, 48%)`
                           : undefined,
                     }}
                   >
@@ -126,8 +129,15 @@ export const Gameboard: FunctionComponent = ({}) => {
                       <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
                     )}
                     {boardState[row][col].state === SquareState.SHIP_HIT && (
-                      <span className="x-mark"> </span>
+                      <span className="x-mark"></span>
                     )}
+                    {!!possibleConfigs &&
+                      showNumbers &&
+                      boardState[row][col].state === SquareState.UNKNOWN && (
+                        <div className="text-white text-xs">
+                          {possibleConfigs[row][col]}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>

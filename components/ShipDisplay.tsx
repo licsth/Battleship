@@ -30,7 +30,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
 
   return (
     <div className="">
-      <p className="mb-6 mt-4 text-slate-600 text-xl text-center">Ships</p>
+      <p className="mb-6 mt-4 text-slate-600 text-xl">Ships</p>
       {ships.map((ship, shipIndex) => (
         <div className="mb-3 flex items-center gap-7">
           <div>
