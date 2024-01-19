@@ -15,10 +15,10 @@ public class Main {
         // System.out.println(Arrays.deepToString(tmp));
         // System.out.println("Finished in " + (System.currentTimeMillis() - start) + "ms.");
 
-        Gamestates gs = new Gamestates();
+        Gamestates gs = new Gamestates(8);
         try {
             String fileName = "validStates8x8.bin";
-            int accepted = gs.tryAllStates(fileName);
+            long accepted = gs.tryAllStates(fileName);
 
             System.out.println(accepted);
 

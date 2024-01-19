@@ -20,8 +20,8 @@ public class Gamestates {
         fourByOneBoundaries = Game.getBoundaries(fourByOnePositions, size);
     }
 
-    public int tryAllStates(String filename) throws IOException{
-        int accepted = 0;
+    public long tryAllStates(String filename) throws IOException{
+        long accepted = 0;
         long blockedSquares1, blockedSquares2, blockedSquares3, blockedSquares4, blockedSquares5, blockedSquares6;
         try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(filename))) {
             for(int i2=0; i2 < twoByOnePositions.length; i2++) {
