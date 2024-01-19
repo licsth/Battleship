@@ -1,4 +1,4 @@
-package java;
+package javaImpl;
 
 import java.io.*;
 
@@ -20,11 +20,13 @@ public class Gamestates {
         fourByOneBoundaries = Game.getBoundaries(fourByOnePositions, size);
     }
 
-    public long tryAllStates(String filename) throws IOException{
-        long accepted = 0;
+    public long[] tryAllStates(String filename) throws IOException{
+        long[] accepted = new long[382820608]; //this is the number of states accepted for standard 8x8, but no array of this size can be created.
+        int numAccepted = 0;
         long blockedSquares1, blockedSquares2, blockedSquares3, blockedSquares4, blockedSquares5, blockedSquares6;
         try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(filename))) {
             for(int i2=0; i2 < twoByOnePositions.length; i2++) {
+                System.out.println(i2 + "/" + twoByOnePositions.length);
                 blockedSquares1 = twoByOnePositions[i2] | twoByOneBoundaries[i2];
                 for(int j2=i2+1; j2 < twoByOnePositions.length; j2++) {
                     if((blockedSquares1 & twoByOnePositions[j2]) != 0) continue;
@@ -48,15 +50,13 @@ public class Gamestates {
                             
                                     for(int i4=0; i4 < fourByOnePositions.length; i4++) {
                                         if((blockedSquares6 & fourByOnePositions[i4]) == 0) {
-                                            // long ships = twoByOnePositions[i2] |
-                                            // twoByOnePositions[j2] |
-                                            // twoByOnePositions[k2] |
-                                            // threeByOnePositions[i3] |
-                                            // threeByOnePositions[j3] |
-                                            // threeByOnePositions[k3] |
-                                            // fourByOnePositions[i4];
-                                            // dos.writeLong(ships);
-                                            accepted++;
+                                            accepted[numAccepted++] = twoByOnePositions[i2] |
+                                            twoByOnePositions[j2] |
+                                            twoByOnePositions[k2] |
+                                            threeByOnePositions[i3] |
+                                            threeByOnePositions[j3] |
+                                            threeByOnePositions[k3] |
+                                            fourByOnePositions[i4];
                                         }
                                     }
                                 }

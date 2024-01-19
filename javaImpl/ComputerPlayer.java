@@ -1,4 +1,4 @@
-package java;
+package javaImpl;
 
 public class ComputerPlayer {
     

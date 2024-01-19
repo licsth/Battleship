@@ -1,4 +1,4 @@
-package java;
+package javaImpl;
 
 import java.io.*;
 
@@ -18,9 +18,9 @@ public class Main {
         Gamestates gs = new Gamestates(8);
         try {
             String fileName = "validStates8x8.bin";
-            long accepted = gs.tryAllStates(fileName);
+            long[] accepted = gs.tryAllStates(fileName);
 
-            System.out.println(accepted);
+            System.out.println("Accepted " + accepted.length + " states, this would take " + (float)(accepted.length*8/1000000000L) + "GB to store.");
 
         } catch (IOException e) {
             // Auto-generated catch block
