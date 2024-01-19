@@ -21,6 +21,7 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -120,7 +121,13 @@ export const Gameboard: FunctionComponent = ({}) => {
                       boardState[row][col].state === SquareState.SHIP_SUNK &&
                         "bg-slate-600",
                       boardState[row][col].state === SquareState.UNKNOWN &&
-                        "bg-slate-200 p-1",
+                        !isLoading &&
+                        `bg-slate-200 p-1`,
+                      boardState[row][col].state === SquareState.UNKNOWN &&
+                        isLoading &&
+                        `bg-slate-300 p-1 loading loading-${Math.round(
+                          ((row + col) / boardSize) * 5
+                        )}`,
                       !!possibleConfigs &&
                         possibleConfigs[row][col] ===
                           highestConfigurationCount &&
