@@ -11,8 +11,8 @@ interface ShipShapeVariant {
 }
 
 export function possibleConfigurations(boardState: Board, ships: ShipShapeVariant[], placedShips: Ship[], log = false): number[][] {
+  counter++;
   if (ships.length === 0) {
-    counter++;
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
       return boardState.map(row => row.map(_ => 0))
     }

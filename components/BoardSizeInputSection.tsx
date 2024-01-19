@@ -8,8 +8,8 @@ interface Props {
   setBoardSize: (boardSize: number) => void;
   setBoardState: (boardState: Board) => void;
   setPossibleConfigs: (possibleConfigs: number[][] | null) => void;
-  showNumbers: boolean;
-  setShowNumbers: (showNumbers: boolean) => void;
+  showFullOutput: boolean;
+  setShowFullOutput: (showFullOutput: boolean) => void;
 }
 
 export const BoardSizeInputSection: FunctionComponent<Props> = ({
@@ -17,12 +17,12 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
   setBoardSize,
   setBoardState,
   setPossibleConfigs,
-  showNumbers,
-  setShowNumbers,
+  showFullOutput,
+  setShowFullOutput,
 }) => {
   return (
     <>
-      <div className="grid grid-cols-2 items-center">
+      <div className="grid grid-cols-2 items-center gap-5">
         <div>
           <label className="block text-xs py-1 text-cyan-600">Board size</label>
           <input
@@ -46,9 +46,9 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
         </div>
         <div>
           <label className="block text-xs py-1 text-cyan-600">
-            Show # of configs
+            Debug output
           </label>
-          <Toggle value={showNumbers} onChange={setShowNumbers} />
+          <Toggle value={showFullOutput} onChange={setShowFullOutput} />
         </div>
       </div>
     </>

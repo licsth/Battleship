@@ -19,7 +19,8 @@ import { rotateShip } from "../utilities/rotateShip";
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
-  const [showNumbers, setShowNumbers] = useState(false);
+  const [showFullOutput, setShowFullOutput] = useState(false);
+  const [computationTime, setComputationTime] = useState<number | null>(null);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -87,7 +88,7 @@ export const Gameboard: FunctionComponent = ({}) => {
         true
       )
     );
-    console.log(`took ${Date.now() - time}ms`);
+    setComputationTime(Date.now() - time);
   }
 
   return (
@@ -101,8 +102,8 @@ export const Gameboard: FunctionComponent = ({}) => {
           setBoardSize={setBoardSize}
           setBoardState={setBoardState}
           setPossibleConfigs={setPossibleConfigs}
-          showNumbers={showNumbers}
-          setShowNumbers={setShowNumbers}
+          showFullOutput={showFullOutput}
+          setShowFullOutput={setShowFullOutput}
         />
         <div className="flex flex-col items-center justify-center content-center flex-grow">
           <div className="block mb-5">
@@ -153,7 +154,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                       <span className="x-mark"></span>
                     )}
                     {!!possibleConfigs &&
-                      showNumbers &&
+                      showFullOutput &&
                       boardState[row][col].state === SquareState.UNKNOWN && (
                         <div className="text-white text-xs">
                           {possibleConfigs[row][col]}
@@ -183,6 +184,11 @@ export const Gameboard: FunctionComponent = ({}) => {
           >
             Reset board
           </button>
+          <div className="mt-5 text-center text-slate-600 text-[10px]">
+            {showFullOutput && computationTime && (
+              <span>Computation time: {computationTime}ms</span>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex items-center justify-center">
