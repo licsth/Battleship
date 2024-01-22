@@ -70,6 +70,41 @@ public class ComputerPlayer {
         return combinations;
     }
 
+    /**
+     * This method returns for a specified gameboard how many arrangements there are left
+     * @param hitShips a long representation of hits (without sinking)
+     * @param sunkShips a long representation of sunk ships
+     * @param missedShots  long representation of missed shots
+     * @param remainingShips an int array of length 4 specifying how 
+     * many ships of each length remain to be placed
+     * @return in how many states each square is occupied
+     */
+    public int getNumberOfPossibleStates(long hitShips, long sunkShips, long missedShots, int[] remainingShips) {
+        
+        // anchor
+        if(remainingShips[0] + remainingShips[1] + remainingShips[2] + remainingShips[3] == 0) {
+            return hitShips == 0L ? 1 : 0;
+        }
+        
+        int numberOfStates = 0;
+
+        // determine shipIndex
+        int shipIndex = 0;
+        while(remainingShips[shipIndex] == 0) shipIndex++;
+        remainingShips[shipIndex]--; // I think this does not behave well with recursion.
+        
+        // recursion
+        for(int i = 0; i < this.positions[shipIndex].length; i++) {
+            long ship = this.positions[shipIndex][i];
+            long boundary = this.boundaries[shipIndex][i];
+            if(Game.isShipPositionValid(missedShots, hitShips, sunkShips, ship, boundary)) {
+                numberOfStates += getNumberOfPossibleStates(hitShips & (~ship), sunkShips | ship, missedShots | boundary, remainingShips);
+            }
+        }
+        remainingShips[shipIndex]++; // I think this puts it back the way it is supposed to be
+        return numberOfStates;
+    }
+
     private static int[][] addCombination(int[][] combinations, long state, int size) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
