@@ -1,8 +1,5 @@
 package javaimpl;
 
-/**
- * A computer player will play battleship against you, by providing a method for
- */
 public class ComputerPlayer {
 
     public long[][] positions; // positions[i] is the array of all positions of ix1 ship
@@ -28,7 +25,7 @@ public class ComputerPlayer {
     }
 
     /**
-     * This method returns for a specified game board a two-dimensional array
+     * This method returns for a specified gameboard a two dimensional array
      * where each entry specifies in how many of the possible game states
      * there is a ship on the corresponding square.
      * 

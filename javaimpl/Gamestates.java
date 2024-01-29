@@ -29,7 +29,7 @@ public class Gamestates {
         }
     }
 
-    private static final int STATES_IN_STANDARD_8x8 = 382820608;
+    public static final int STATES_IN_STANDARD_8x8 = 382820608;
 
     public long[] getAllStates() {
         long[] accepted = new long[STATES_IN_STANDARD_8x8];
@@ -65,15 +65,15 @@ public class Gamestates {
                                 blockedSquares6 = blockedSquares5 | threeByOnePositions[k3]
                                         | threeByOneBoundaries[k3];
 
-                                for (int i4 = 0; i4 < fourByOnePositions.length; i4++) {
-                                    if ((blockedSquares6 & fourByOnePositions[i4]) == 0) {
+                                for (long fourByOnePosition : fourByOnePositions) {
+                                    if ((blockedSquares6 & fourByOnePosition) == 0) {
                                         accepted[numberAccepted++] = twoByOnePositions[i2] |
                                                 twoByOnePositions[j2] |
                                                 twoByOnePositions[k2] |
                                                 threeByOnePositions[i3] |
                                                 threeByOnePositions[j3] |
                                                 threeByOnePositions[k3] |
-                                                fourByOnePositions[i4];
+                                                fourByOnePosition;
                                     }
                                 }
                             }
