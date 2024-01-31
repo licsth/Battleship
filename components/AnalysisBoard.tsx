@@ -7,6 +7,7 @@ import { rotateShip } from "../utilities/rotateShip";
 import { ShipShape } from "../utilities/ship";
 import { possibleConfigurations } from "../utilities/bestGuess";
 import { shapesEqualWithoutRotation } from "../utilities/shipShapesEqual";
+import { BoardDisplay } from "./BoardDisplay";
 
 interface Props {
   boardSize: number;
@@ -69,68 +70,41 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
   return (
     <>
       <div className="block mb-5">
-        {range(boardSize).map((row) => (
-          <div className="flex flex-row gap-2 mb-2" key={"row-" + row}>
-            {range(boardSize).map((col) => (
-              <div
-                key={"row-" + row + "-col-" + col}
-                className={classNames(
-                  "w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer",
-                  (boardState[row][col].state === SquareState.MISSED ||
-                    boardState[row][col].state === SquareState.SHIP_HIT) &&
-                    "bg-slate-200",
-                  boardState[row][col].state === SquareState.SHIP_SUNK &&
-                    "bg-slate-600",
-                  boardState[row][col].state === SquareState.UNKNOWN &&
-                    !isLoading &&
-                    `bg-slate-200 p-1`,
-                  boardState[row][col].state === SquareState.UNKNOWN &&
-                    isLoading &&
-                    `bg-slate-300 p-1 loading loading-${Math.round(
-                      ((row + col) / boardSize) * 5
-                    )}`,
-                  !!possibleConfigs &&
-                    possibleConfigs[row][col] === highestConfigurationCount &&
-                    boardState[row][col].state === SquareState.UNKNOWN &&
-                    highestConfigurationCount != 0 &&
-                    "striped"
-                )}
-                onClick={() => {
-                  const newState = [...boardState];
-                  newState[row][col].state = nextSquareState(
-                    boardState[row][col].state
-                  );
-                  setBoardState(newState);
-                }}
-                style={{
-                  backgroundColor:
-                    boardState[row][col].state === SquareState.UNKNOWN &&
-                    possibleConfigs
-                      ? `hsl(${
-                          (possibleConfigs[row][col] /
-                            (highestConfigurationCount || 1)) *
-                          200
-                        }, 90%, 48%)`
-                      : undefined,
-                }}
-              >
-                {boardState[row][col].state === SquareState.MISSED && (
-                  <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
-                )}
-                {boardState[row][col].state === SquareState.SHIP_HIT && (
-                  <span className="x-mark"></span>
-                )}
-                {!!possibleConfigs &&
-                  showFullOutput &&
-                  boardState[row][col].state === SquareState.UNKNOWN && (
-                    <div className="text-white text-xs">
-                      {possibleConfigs[row][col]}
-                    </div>
-                  )}
+        <BoardDisplay
+          boardState={boardState}
+          isLoading={isLoading}
+          onFieldClick={(row, col) => {
+            const newState = [...boardState];
+            newState[row][col].state = nextSquareState(
+              boardState[row][col].state
+            );
+            setBoardState(newState);
+          }}
+          getFieldBackgroundColor={(row, col) => {
+            if (
+              boardState[row][col].state !== SquareState.UNKNOWN ||
+              !possibleConfigs
+            )
+              return undefined;
+            return `hsl(${
+              (possibleConfigs[row][col] / (highestConfigurationCount || 1)) *
+              200
+            }, 90%, 48%)`;
+          }}
+          fieldContent={(row, col) => {
+            if (
+              !possibleConfigs ||
+              !showFullOutput ||
+              boardState[row][col].state !== SquareState.UNKNOWN
+            )
+              return null;
+            return (
+              <div className="text-white text-xs">
+                {possibleConfigs[row][col]}
               </div>
-            ))}
-          </div>
-        ))}
+            );
+          }}
+        />
       </div>
       <button
         onClick={calculatePossibleConfigs}

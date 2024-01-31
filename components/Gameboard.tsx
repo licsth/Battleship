@@ -87,17 +87,19 @@ export const Gameboard: FunctionComponent = ({}) => {
           setShowFullOutput={setShowFullOutput}
         />
         <div className="flex flex-col items-center justify-center content-center flex-grow">
-          <AnalysisBoard
-            boardSize={boardSize}
-            showFullOutput={showFullOutput}
-            isLoading={isLoading}
-            possibleConfigs={possibleConfigs}
-            boardState={boardState}
-            setBoardState={setBoardState}
-            setComputationTime={setComputationTime}
-            unsunkenShips={unsunkenShips}
-            setPossibleConfigs={setPossibleConfigs}
-          />
+          {gameMode === GameMode.ANALYSIS && (
+            <AnalysisBoard
+              boardSize={boardSize}
+              showFullOutput={showFullOutput}
+              isLoading={isLoading}
+              possibleConfigs={possibleConfigs}
+              boardState={boardState}
+              setBoardState={setBoardState}
+              setComputationTime={setComputationTime}
+              unsunkenShips={unsunkenShips}
+              setPossibleConfigs={setPossibleConfigs}
+            />
+          )}
           <button
             onClick={() => {
               setBoardState(
