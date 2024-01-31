@@ -16,12 +16,19 @@ import {
 } from "../utilities/shipShapesEqual";
 import { findSunkenShip } from "../utilities/findSunkenShip";
 import { rotateShip } from "../utilities/rotateShip";
+import { AnalysisBoard } from "./AnalysisBoard";
+
+enum GameMode {
+  ANALYSIS,
+  STUPID_DEFENSIVE,
+}
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [boardSize, setBoardSize] = useState<number>(5);
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.ANALYSIS);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -58,39 +65,6 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
     null
   );
-  const highestConfigurationCount = useMemo(() => {
-    if (!possibleConfigs) return 0;
-    return Math.max(
-      ...possibleConfigs.map((row, i) =>
-        Math.max(
-          ...row.map((col, j) =>
-            boardState[i][j].state === SquareState.UNKNOWN ? col : 0
-          )
-        )
-      )
-    );
-  }, [possibleConfigs]);
-
-  function calculatePossibleConfigs() {
-    const time = Date.now();
-    setPossibleConfigs(
-      possibleConfigurations(
-        boardState,
-        unsunkenShips.map((ship) => {
-          const transposed = rotateShip(ship);
-          return {
-            normal: [...ship],
-            transposed: shapesEqualWithoutRotation(ship, transposed)
-              ? null
-              : transposed,
-          };
-        }),
-        [],
-        true
-      )
-    );
-    setComputationTime(Date.now() - time);
-  }
 
   return (
     <div className="grid grid-cols-3 bg-slate-100 font-mono">
@@ -100,84 +74,30 @@ export const Gameboard: FunctionComponent = ({}) => {
       <div className="h-screen flex flex-col items-center justify-center content-center p-5">
         <BoardSizeInputSection
           boardSize={boardSize}
-          setBoardSize={setBoardSize}
-          setBoardState={setBoardState}
-          setPossibleConfigs={setPossibleConfigs}
+          onBoardSizeChange={(newBoardSize) => {
+            setBoardSize(newBoardSize);
+            setBoardState(
+              newGrid(newBoardSize, newBoardSize, () => ({
+                state: SquareState.UNKNOWN,
+              }))
+            );
+            setPossibleConfigs(null);
+          }}
           showFullOutput={showFullOutput}
           setShowFullOutput={setShowFullOutput}
         />
         <div className="flex flex-col items-center justify-center content-center flex-grow">
-          <div className="block mb-5">
-            {range(boardSize).map((row) => (
-              <div className="flex flex-row gap-2 mb-2" key={"row-" + row}>
-                {range(boardSize).map((col) => (
-                  <div
-                    key={"row-" + row + "-col-" + col}
-                    className={classNames(
-                      "w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer",
-                      (boardState[row][col].state === SquareState.MISSED ||
-                        boardState[row][col].state === SquareState.SHIP_HIT) &&
-                        "bg-slate-200",
-                      boardState[row][col].state === SquareState.SHIP_SUNK &&
-                        "bg-slate-600",
-                      boardState[row][col].state === SquareState.UNKNOWN &&
-                        !isLoading &&
-                        `bg-slate-200 p-1`,
-                      boardState[row][col].state === SquareState.UNKNOWN &&
-                        isLoading &&
-                        `bg-slate-300 p-1 loading loading-${Math.round(
-                          ((row + col) / boardSize) * 5
-                        )}`,
-                      !!possibleConfigs &&
-                        possibleConfigs[row][col] ===
-                          highestConfigurationCount &&
-                        boardState[row][col].state === SquareState.UNKNOWN &&
-                        highestConfigurationCount != 0 &&
-                        "striped"
-                    )}
-                    onClick={() => {
-                      const newState = [...boardState];
-                      newState[row][col].state = nextSquareState(
-                        boardState[row][col].state
-                      );
-                      setBoardState(newState);
-                    }}
-                    style={{
-                      backgroundColor:
-                        boardState[row][col].state === SquareState.UNKNOWN &&
-                        possibleConfigs
-                          ? `hsl(${
-                              (possibleConfigs[row][col] /
-                                (highestConfigurationCount || 1)) *
-                              200
-                            }, 90%, 48%)`
-                          : undefined,
-                    }}
-                  >
-                    {boardState[row][col].state === SquareState.MISSED && (
-                      <span className="border-4 border-slate-600 rounded-full w-6 h-6 inline-block"></span>
-                    )}
-                    {boardState[row][col].state === SquareState.SHIP_HIT && (
-                      <span className="x-mark"></span>
-                    )}
-                    {!!possibleConfigs &&
-                      showFullOutput &&
-                      boardState[row][col].state === SquareState.UNKNOWN && (
-                        <div className="text-white text-xs">
-                          {possibleConfigs[row][col]}
-                        </div>
-                      )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={calculatePossibleConfigs}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44 shadow-sm caps"
-          >
-            Calculate
-          </button>
+          <AnalysisBoard
+            boardSize={boardSize}
+            showFullOutput={showFullOutput}
+            isLoading={isLoading}
+            possibleConfigs={possibleConfigs}
+            boardState={boardState}
+            setBoardState={setBoardState}
+            setComputationTime={setComputationTime}
+            unsunkenShips={unsunkenShips}
+            setPossibleConfigs={setPossibleConfigs}
+          />
           <button
             onClick={() => {
               setBoardState(
@@ -192,7 +112,7 @@ export const Gameboard: FunctionComponent = ({}) => {
             Reset board
           </button>
           <div className="mt-5 text-center text-slate-600 text-[10px]">
-            {showFullOutput && computationTime && (
+            {showFullOutput && computationTime != null && (
               <span>Computation time: {computationTime}ms</span>
             )}
           </div>

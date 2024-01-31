@@ -5,18 +5,14 @@ import { Toggle } from "./Toggle";
 
 interface Props {
   boardSize: number;
-  setBoardSize: (boardSize: number) => void;
-  setBoardState: (boardState: Board) => void;
-  setPossibleConfigs: (possibleConfigs: number[][] | null) => void;
+  onBoardSizeChange: (boardSize: number) => void;
   showFullOutput: boolean;
   setShowFullOutput: (showFullOutput: boolean) => void;
 }
 
 export const BoardSizeInputSection: FunctionComponent<Props> = ({
   boardSize,
-  setBoardSize,
-  setBoardState,
-  setPossibleConfigs,
+  onBoardSizeChange,
   showFullOutput,
   setShowFullOutput,
 }) => {
@@ -34,13 +30,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
             onChange={(e) => {
               if (!e.target.value) return;
               const newBoardSize = parseInt(e.target.value);
-              setBoardSize(newBoardSize);
-              setBoardState(
-                newGrid(newBoardSize, newBoardSize, () => ({
-                  state: SquareState.UNKNOWN,
-                }))
-              );
-              setPossibleConfigs(null);
+              onBoardSizeChange(newBoardSize);
             }}
           ></input>
         </div>

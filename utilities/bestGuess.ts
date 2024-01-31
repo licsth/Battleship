@@ -10,7 +10,7 @@ interface ShipShapeVariant {
   transposed: ShipShape | null;
 }
 
-export function possibleConfigurations(boardState: Board, ships: ShipShapeVariant[], placedShips: Ship[], log = false): number[][] {
+export function possibleConfigurations(boardState: Board, ships: ShipShapeVariant[], placedShips: Ship[], breakAfterOne = false, log = false): number[][] {
   counter++;
   if (ships.length === 0) {
     if (boardState.some(row => row.some(square => square.state === SquareState.SHIP_HIT))) {
@@ -59,7 +59,10 @@ export function possibleConfigurations(boardState: Board, ships: ShipShapeVarian
           }
           if (allHit) continue shipPlacementLoop; // ships cannot be completely hit but not sunk yet
           // add possibleConfigurations(newBoardState, ships) to configurations component-wise
-          const newConfigurations = possibleConfigurations(newBoardState, [...ships], [{ shape: correctShip, position: [x, y], orientation }, ...placedShips,]);
+          const newConfigurations = possibleConfigurations(newBoardState, [...ships], [{ shape: correctShip, position: [x, y], orientation }, ...placedShips,], breakAfterOne);
+          if (breakAfterOne && newConfigurations.some(row => row.some(square => square > 0))) {
+            return newConfigurations;
+          }
           for (let i = 0; i < newConfigurations.length; i++) {
             for (let j = 0; j < newConfigurations[0].length; j++) {
               configurations[i][j] += newConfigurations[i][j];
