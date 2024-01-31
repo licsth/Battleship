@@ -5,7 +5,7 @@ import { shipShapesEqual } from "./shipShapesEqual";
 let counter = 0;
 let validConfigCounter = 0;
 
-interface ShipShapeVariant {
+export interface ShipShapeVariant {
   normal: ShipShape;
   transposed: ShipShape | null;
 }

@@ -17,6 +17,7 @@ import {
 import { findSunkenShip } from "../utilities/findSunkenShip";
 import { rotateShip } from "../utilities/rotateShip";
 import { AnalysisBoard } from "./AnalysisBoard";
+import { StupidDefenseBoard } from "./StupidDefenseBoard";
 
 enum GameMode {
   ANALYSIS,
@@ -28,7 +29,7 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [gameMode, setGameMode] = useState<GameMode>(GameMode.ANALYSIS);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.STUPID_DEFENSIVE);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
@@ -89,7 +90,6 @@ export const Gameboard: FunctionComponent = ({}) => {
         <div className="flex flex-col items-center justify-center content-center flex-grow">
           {gameMode === GameMode.ANALYSIS && (
             <AnalysisBoard
-              boardSize={boardSize}
               showFullOutput={showFullOutput}
               isLoading={isLoading}
               possibleConfigs={possibleConfigs}
@@ -98,6 +98,13 @@ export const Gameboard: FunctionComponent = ({}) => {
               setComputationTime={setComputationTime}
               unsunkenShips={unsunkenShips}
               setPossibleConfigs={setPossibleConfigs}
+            />
+          )}
+          {gameMode === GameMode.STUPID_DEFENSIVE && (
+            <StupidDefenseBoard
+              boardState={boardState}
+              setBoardState={setBoardState}
+              unsunkenShips={unsunkenShips}
             />
           )}
           <button

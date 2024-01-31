@@ -10,7 +10,6 @@ import { shapesEqualWithoutRotation } from "../utilities/shipShapesEqual";
 import { BoardDisplay } from "./BoardDisplay";
 
 interface Props {
-  boardSize: number;
   showFullOutput: boolean;
   isLoading: boolean;
   possibleConfigs: number[][] | null;
@@ -22,7 +21,6 @@ interface Props {
 }
 
 export const AnalysisBoard: FunctionComponent<Props> = ({
-  boardSize,
   showFullOutput,
   isLoading,
   possibleConfigs,

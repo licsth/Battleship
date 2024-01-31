@@ -2,7 +2,7 @@ import { addSquareToShip } from "./addSquareToShip";
 import { Board, SquareState } from "./boardState";
 import { ShipShape } from "./ship";
 
-export function findSunkenShip(boardState: Board): ShipShape | null {
+export function findSunkenShipAndShift(boardState: Board, startX?: number, startY?: number): [ShipShape, number, number] | null {
   const boardY = boardState.findIndex((row) => row.some((square) => square.state === SquareState.SHIP_SUNK));
   if (boardY === -1) {
     return null;
@@ -11,8 +11,17 @@ export function findSunkenShip(boardState: Board): ShipShape | null {
   if (boardX === -1) {
     return null;
   }
-  const res = extendShipRecursively(boardState, [[]], boardX, boardY, 0, 0);
-  return res[0];
+  if (startX && startY && boardState[boardY][boardX].state !== SquareState.SHIP_SUNK) return null
+  const res = extendShipRecursively(boardState, [[]], startX ?? boardX, startY ?? boardY, 0, 0);
+  return res;
+}
+
+export function findSunkenShip(boardState: Board): ShipShape | null {
+  const res = findSunkenShipAndShift(boardState);
+  if (res === null) {
+    return null;
+  }
+  return res[0]
 }
 
 /**
