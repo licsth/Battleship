@@ -25,7 +25,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
         <div>
           <label className="block text-xs py-1 text-cyan-600">Game mode</label>
           <select
-            className="text-xs p-2"
+            className="text-xs p-2 shadow-sm rounded"
             value={gameMode}
             onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
           >
