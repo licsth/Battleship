@@ -1,4 +1,4 @@
-package javaImpl;
+package javaimpl;
 
 public class ComputerPlayer {
     
@@ -18,8 +18,8 @@ public class ComputerPlayer {
         while(numberOfShipsPerType[longestShip-1] == 0) longestShip--;
 
         for(int i = 0; i < longestShip; i++) {
-            this.positions[i] = Game.getPositionsForOneByN(i+1, boardSize);
-            this.boundaries[i] = Game.getBoundaries(this.positions[i], boardSize);
+            this.positions[i] = Utils.getPositionsForOneByN(i+1, boardSize);
+            this.boundaries[i] = Utils.getBoundaries(this.positions[i], boardSize);
         }
     }
 
@@ -54,7 +54,7 @@ public class ComputerPlayer {
         for(int i = 0; i < this.positions[shipIndex].length; i++) {
             long ship = this.positions[shipIndex][i];
             long boundary = this.boundaries[shipIndex][i];
-            if(Game.isShipPositionValid(missedShots, hitShips, sunkShips, ship, boundary)) {
+            if(Utils.isShipPositionValid(missedShots, hitShips, sunkShips, ship, boundary)) {
                 combinations = addArrays(combinations, getNumberOfCombinationsPerSquare(hitShips & (~ship), sunkShips | ship, missedShots | boundary, remainingShips));
             }
         }

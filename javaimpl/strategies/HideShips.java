@@ -1,4 +1,4 @@
-package javaimpl;
+package javaimpl.strategies;
 
 /**
  * This Defensive strategy will only admit a hit if there is no other way.
@@ -11,12 +11,17 @@ public class HideShips extends DefensiveStrategy {
     private long shots;
 
     public HideShips(int boardSize) {
-        super(boardSize);
+        super();
     }
     @Override
     public int shootSquare(long square) {
         shots |= square;
         // this somehow needs access to the gameStates
         return 0;
+    }
+
+    @Override
+    public boolean hasLost() {
+        return false;
     }
 }

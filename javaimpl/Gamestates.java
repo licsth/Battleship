@@ -16,13 +16,13 @@ public class Gamestates {
 
     public long[] gameStates;
 
-    public Gamestates(int size, boolean precompute) {
-        twoByOnePositions = Game.getPositionsForOneByN(2, size);
-        threeByOnePositions = Game.getPositionsForOneByN(3, size);
-        fourByOnePositions = Game.getPositionsForOneByN(4, size);
-        twoByOneBoundaries = Game.getBoundaries(twoByOnePositions, size);
-        threeByOneBoundaries = Game.getBoundaries(threeByOnePositions, size);
-        fourByOneBoundaries = Game.getBoundaries(fourByOnePositions, size);
+    public Gamestates(boolean precompute) {
+        twoByOnePositions = Utils.getPositionsForOneByN(2, 8);
+        threeByOnePositions = Utils.getPositionsForOneByN(3, 8);
+        fourByOnePositions = Utils.getPositionsForOneByN(4, 8);
+        twoByOneBoundaries = Utils.getBoundaries(twoByOnePositions, 8);
+        threeByOneBoundaries = Utils.getBoundaries(threeByOnePositions, 8);
+        fourByOneBoundaries = Utils.getBoundaries(fourByOnePositions, 8);
 
         if (precompute) {
             System.out.println("Starting precomputation... ");
@@ -96,7 +96,7 @@ public class Gamestates {
      * by current requirements, a 4x1 may be placed vertically in the top left
      * corner!
      * This method assumes that is done! (Call missedShots |=
-     * Game.getBoundary(sunkShips, 8);)
+     * Utils.getBoundary(sunkShips, 8);)
      */
     public long[] getValidStates(long missedShots, long hitShips, long sunkShips) {
         Objects.requireNonNull(gameStates, "The game states were not precomputed.");

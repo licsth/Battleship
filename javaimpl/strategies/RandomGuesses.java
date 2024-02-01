@@ -1,4 +1,6 @@
-package javaimpl;
+package javaimpl.strategies;
+
+import javaimpl.strategies.OffensiveStrategy;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,11 +11,11 @@ import java.util.stream.IntStream;
  */
 public class RandomGuesses extends OffensiveStrategy {
 
-    private final List<Integer> guesses;
-    public RandomGuesses(int boardSize) {
-        super(boardSize);
-        guesses = IntStream.range(0, boardSize * boardSize)
+    private final List<Long> guesses;
+    public RandomGuesses() {
+        guesses = IntStream.range(0, 64)
                 .boxed()
+                .map(i -> 1L << i)
                 .collect(Collectors.toList());
         Collections.shuffle(guesses);
     }
