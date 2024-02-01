@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public class Gamestates {
 
+
+
     public long[] twoByOnePositions;
     public long[] threeByOnePositions;
     public long[] fourByOnePositions;

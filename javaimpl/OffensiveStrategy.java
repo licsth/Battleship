@@ -29,19 +29,20 @@ public abstract class OffensiveStrategy {
             return;
         }
 
-        long ship = getSunkShip(hit, square);
+        long ship = getSunkShip(hit, square, boardSize);
         miss |= Game.getBoundary(ship, boardSize);
         hit &= ~ship;
         sunk |= ship;
     }
 
     /**
-     * This method returns for a given square and hits the ship that the square belongs to
+     * This method returns for a given square and hits the connected component of
+     * hits that the square belongs to (when added to the hits)
      * @param hits the known hits
      * @param square the square
      * @return the ship that the square belongs to
      */
-    public long getSunkShip(long hits, long square) {
+    public static long getSunkShip(long hits, long square, int boardSize) {
         long ship = square;
         hits |= square;
         while((ship & hits) != 0) {

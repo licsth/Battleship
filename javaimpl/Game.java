@@ -1,6 +1,7 @@
-package javaImpl;
+package javaimpl;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class Game {
 
@@ -106,6 +107,15 @@ public class Game {
             ship |= (1L << (i * size));
         }
         return ship;
+    }
+
+    public static void shuffleArray(long[] arr, Random rnd) {
+        for (int i = arr.length - 1; i > 0; i--) {
+            int index = rnd.nextInt(i + 1);
+            long tmp = arr[index];
+            arr[index] = arr[i];
+            arr[i] = tmp;
+        }
     }
 
 }
