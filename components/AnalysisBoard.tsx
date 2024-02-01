@@ -1,7 +1,5 @@
 import { FunctionComponent, useMemo } from "react";
 import { Board, SquareState } from "../utilities/boardState";
-import { range } from "lodash";
-import { classNames } from "../utilities/classNames";
 import { nextSquareState } from "../utilities/nextSquareState";
 import { rotateShip } from "../utilities/rotateShip";
 import { ShipShape } from "../utilities/ship";

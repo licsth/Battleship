@@ -41,9 +41,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
                   `bg-slate-200 p-1`,
                 boardState[row][col].state === SquareState.UNKNOWN &&
                   isLoading &&
-                  `bg-slate-300 p-1 loading loading-${Math.round(
-                    ((row + col) / boardSize) * 5
-                  )}`,
+                  `bg-slate-300 p-1 loading`,
                 fieldIsStriped?.(row, col) && "striped"
               )}
               onClick={() => {
@@ -51,6 +49,11 @@ export const BoardDisplay: FunctionComponent<Props> = ({
               }}
               style={{
                 backgroundColor: getFieldBackgroundColor?.(row, col),
+                animationDelay:
+                  boardState[row][col].state === SquareState.UNKNOWN &&
+                  isLoading
+                    ? (row + col) / boardSize + "s"
+                    : undefined,
               }}
             >
               {boardState[row][col].state === SquareState.MISSED && (

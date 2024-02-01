@@ -39,46 +39,6 @@
   animation: pulse 2s infinite;
 }
 
-.loading-1 {
-  animation-delay: 0.2s;
-}
-
-.loading-2 {
-  animation-delay: 0.4s;
-}
-
-.loading-3 {
-  animation-delay: 0.6s;
-}
-
-.loading-4 {
-  animation-delay: 0.8s;
-}
-
-.loading-5 {
-  animation-delay: 1s;
-}
-
-.loading-6 {
-  animation-delay: 1.2s;
-}
-
-.loading-7 {
-  animation-delay: 1.4s;
-}
-
-.loading-8 {
-  animation-delay: 1.6s;
-}
-
-.loading-9 {
-  animation-delay: 1.8s;
-}
-
-.loading-10 {
-  animation-delay: 2s;
-}
-
 @keyframes pulse {
   0% {
     opacity: 0.4;
