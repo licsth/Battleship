@@ -53,7 +53,7 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
         true
       );
       newState[row][col].state = SquareState.SHIP_HIT;
-      copySunkShips(newState, possibleConfig, row, col);
+      copySunkShips(newState, possibleConfig);
       setBoardState(newState);
     }
   }

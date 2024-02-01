@@ -1,23 +1,17 @@
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { FunctionComponent, useMemo, useState } from "react";
 import React from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { ShipShape } from "../utilities/ship";
-import { possibleConfigurations } from "../utilities/bestGuess";
 import { range } from "lodash";
-import { classNames } from "../utilities/classNames";
 import { newGrid } from "../utilities/array";
 import { BoardSizeInputSection } from "./BoardSizeInputSection";
-import { nextSquareState } from "../utilities/nextSquareState";
 import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
-import {
-  shapesEqualWithoutRotation,
-  shipShapesEqual,
-} from "../utilities/shipShapesEqual";
+import { shipShapesEqual } from "../utilities/shipShapesEqual";
 import { findSunkenShip } from "../utilities/findSunkenShip";
-import { rotateShip } from "../utilities/rotateShip";
 import { AnalysisBoard } from "./AnalysisBoard";
 import { StupidDefenseBoard } from "./StupidDefenseBoard";
+import { trimShip } from "../utilities/trimShip";
 
 enum GameMode {
   ANALYSIS,
@@ -48,7 +42,7 @@ export const Gameboard: FunctionComponent = ({}) => {
       row.map((col) => ({ ...col }))
     );
     let sunkenShip: ShipShape | null = null;
-    while ((sunkenShip = findSunkenShip(boardStateCopy)) != null) {
+    while ((sunkenShip = trimShip(findSunkenShip(boardStateCopy))) != null) {
       const shipIndex = ships.findIndex(
         (ship, index) =>
           indices.includes(index) &&

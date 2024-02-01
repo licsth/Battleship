@@ -1,25 +1,27 @@
 import { Board, SquareState } from "./boardState";
-import { findSunkenShipAndShift } from "./findSunkenShip";
+import { findSunkenShip } from "./findSunkenShip";
 
-export function copySunkShips(boardState: Board, possibleConfig: number[][], row: number, col: number) {
-  const possibleCondifBoardState = possibleConfig.map(row => row.map(col => ({ state: col ? SquareState.SHIP_SUNK : SquareState.UNKNOWN })));
+export function copySunkShips(boardState: Board, possibleConfig: number[][]) {
+  const hitPositions = boardState.flatMap((row, y) => row.map((square, x) => ({ x, y, square })).filter(({ square }) => square.state === SquareState.SHIP_HIT));
+  hitPositions.forEach(({ x, y }) => copySunkShipAt(boardState, possibleConfig, y, x));
+}
 
-  const res = findSunkenShipAndShift(possibleCondifBoardState, col, row);
-  if (res) {
-    const [ship, xShift, yShift] = res;
+export function copySunkShipAt(boardState: Board, possibleConfig: number[][], row: number, col: number) {
+  if (boardState[row][col].state !== SquareState.SHIP_HIT) return;
+  const possibleConfigBoardState = possibleConfig.map(row => row.map(col => ({ state: col ? SquareState.SHIP_SUNK : SquareState.UNKNOWN })));
+
+  const ship = findSunkenShip(possibleConfigBoardState, col, row);
+  if (ship) {
     let allDiscovered = true;
-    for (let i = 0; i < ship.length; i++) {
-      for (let j = 0; j < ship[i].length; j++) {
-        if (!ship[i][j]) continue;
-        if (boardState[i + row - yShift][j + col - xShift].state === SquareState.UNKNOWN) { allDiscovered = false; }
+    for (let y = 0; y < ship.length; y++) {
+      for (let x = 0; x < ship[y].length; x++) {
+        if (ship[y][x] && boardState[y][x].state === SquareState.UNKNOWN) { allDiscovered = false; }
       }
     }
     if (allDiscovered) {
-      for (let i = 0; i < ship.length; i++) {
-        for (let j = 0; j < ship[i].length; j++) {
-          if (!ship[i][j]) continue;
-          const y = i + row - yShift;
-          const x = j + col - xShift;
+      for (let y = 0; y < ship.length; y++) {
+        for (let x = 0; x < ship[y].length; x++) {
+          if (!ship[y][x]) continue;
           boardState[y][x].state = SquareState.SHIP_SUNK;
           //update all non-ship neighbors to missed
           for (let i = -1; i <= 1; i++) {
