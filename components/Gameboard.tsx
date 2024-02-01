@@ -23,7 +23,7 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [gameMode, setGameMode] = useState<GameMode>(GameMode.STUPID_DEFENSIVE);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.ANALYSIS);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
