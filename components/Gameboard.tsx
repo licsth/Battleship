@@ -13,9 +13,9 @@ import { AnalysisBoard } from "./AnalysisBoard";
 import { StupidDefenseBoard } from "./StupidDefenseBoard";
 import { trimShip } from "../utilities/trimShip";
 
-enum GameMode {
-  ANALYSIS,
-  STUPID_DEFENSIVE,
+export enum GameMode {
+  ANALYSIS = "analysis",
+  STUPID_DEFENSIVE = "stupid_defensive",
 }
 
 export const Gameboard: FunctionComponent = ({}) => {
@@ -80,6 +80,8 @@ export const Gameboard: FunctionComponent = ({}) => {
           }}
           showFullOutput={showFullOutput}
           setShowFullOutput={setShowFullOutput}
+          gameMode={gameMode}
+          setGameMode={setGameMode}
         />
         <div className="flex flex-col items-center justify-center content-center flex-grow">
           {gameMode === GameMode.ANALYSIS && (

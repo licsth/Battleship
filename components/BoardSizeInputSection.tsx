@@ -1,13 +1,14 @@
 import { FunctionComponent } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { newGrid } from "../utilities/array";
 import { Toggle } from "./Toggle";
+import { GameMode } from "./Gameboard";
 
 interface Props {
   boardSize: number;
   onBoardSizeChange: (boardSize: number) => void;
   showFullOutput: boolean;
   setShowFullOutput: (showFullOutput: boolean) => void;
+  gameMode: GameMode;
+  setGameMode: (gameMode: GameMode) => void;
 }
 
 export const BoardSizeInputSection: FunctionComponent<Props> = ({
@@ -15,10 +16,23 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
   onBoardSizeChange,
   showFullOutput,
   setShowFullOutput,
+  gameMode,
+  setGameMode,
 }) => {
   return (
     <>
-      <div className="grid grid-cols-2 items-center gap-5">
+      <div className="flex items-center gap-5">
+        <div>
+          <label className="block text-xs py-1 text-cyan-600">Game mode</label>
+          <select
+            className="text-xs p-2"
+            value={gameMode}
+            onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
+          >
+            <option value={GameMode.ANALYSIS}>Analysis</option>
+            <option value={GameMode.STUPID_DEFENSIVE}>Mobbing</option>
+          </select>
+        </div>
         <div>
           <label className="block text-xs py-1 text-cyan-600">Board size</label>
           <input
