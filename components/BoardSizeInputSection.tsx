@@ -42,8 +42,8 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
             step={1}
             value={boardSize}
             onChange={(e) => {
-              if (!e.target.value) return;
-              const newBoardSize = parseInt(e.target.value);
+              const value = (e.target.value && parseInt(e.target.value)) || 0;
+              const newBoardSize = value;
               onBoardSizeChange(newBoardSize);
             }}
           ></input>
