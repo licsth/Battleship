@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import React from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { ShipShape } from "../utilities/ship";
@@ -60,6 +60,15 @@ export const Gameboard: FunctionComponent = ({}) => {
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
     null
   );
+
+  useEffect(() => {
+    if (window.location.origin !== "http://localhost:3000") return;
+    fetch("http://localhost:8080/api/hallo")
+      .then(async (response) => {
+        console.log("Backend says", await response.text());
+      })
+      .catch((error) => console.error("Backend error", error));
+  }, []);
 
   return (
     <div className="grid grid-cols-3 bg-slate-100 font-mono">
