@@ -8,15 +8,16 @@ package schiffeversenken.javaimpl.strategies;
  */
 public class HideShips extends DefensiveStrategy {
 
-    private long shots;
+    private long[] states;
 
-    public HideShips(int boardSize) {
+    public HideShips(long[] states) {
         super();
+        this.states = states;
     }
     @Override
     public int shootSquare(long square) {
-        shots |= square;
-        // this somehow needs access to the gameStates
+        // TODO copy... I mean adapt Lindas code but make it bitwise
+
         return 0;
     }
 

@@ -1,7 +1,6 @@
 package schiffeversenken.javaimpl.strategies;
 import schiffeversenken.javaimpl.Gamestates;
 
-import java.io.RandomAccessFile;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,8 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RandomPlacement extends FairDefense {
 
-
-
     /**
      * Constructs a RandomPlacement Defensive Strategy.
      */
@@ -23,6 +20,4 @@ public class RandomPlacement extends FairDefense {
         int pos = rnd.nextInt(Gamestates.STATES_IN_STANDARD_8x8);
         this.ships = states[pos];
     }
-
-
 }

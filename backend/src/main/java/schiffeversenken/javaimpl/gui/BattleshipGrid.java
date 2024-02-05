@@ -1,7 +1,5 @@
 package schiffeversenken.javaimpl.gui;
 
-import schiffeversenken.javaimpl.players.Player;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -11,7 +9,7 @@ public abstract class BattleshipGrid extends JFrame {
 
     public static final int GRID_SIZE = 8;
 
-    private final JButton[][] buttons;
+    protected final JButton[][] buttons;
 
     public BattleshipGrid(String title) {
         super(title);
@@ -40,6 +38,10 @@ public abstract class BattleshipGrid extends JFrame {
                 panel.add(buttons[i][j]);
             }
         }
+        // TODO make confirmation button, hook it up to things.
+        JButton confirmButton = new JButton("Confirm");
+        confirmButton.addActionListener(e -> makeChoice());
+        panel.add(confirmButton);
         add(panel);
         pack();
         setVisible(true);
@@ -56,8 +58,7 @@ public abstract class BattleshipGrid extends JFrame {
     protected abstract void registerClick(int i, int j);
 
     /**
-     * This method notifies the strategy of the choice that was made using registerClick()
-     * and updates this Grid according to the outcome.
+     * This method notifies the strategy of the choice that was made using registerClick().
      */
     protected abstract void makeChoice();
 
@@ -86,7 +87,7 @@ public abstract class BattleshipGrid extends JFrame {
      * @param squares the squares to update
      * @param state the state to set the button to
      */
-    protected void setStates(long squares, int state) {
+    public void setStates(long squares, int state) {
         for (int i = 0; i < 64; i++) {
             if((squares & (1L << i)) != 0) {
                 updateSquare((63-i)/8, 7-i%8, state);
@@ -94,5 +95,29 @@ public abstract class BattleshipGrid extends JFrame {
         }
     }
 
+    /**
+     * Unlocks all buttons that can still be pressed for when it is this players turn
+     */
+    public void unlock() {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (buttons[i][j].getBackground() == Color.gray) {
+                    buttons[i][j].setEnabled(true);
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Locks all buttons for when it is not this players turn
+     */
+    public void lock() {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                buttons[i][j].setEnabled(false);
+            }
+        }
+    }
 }
 

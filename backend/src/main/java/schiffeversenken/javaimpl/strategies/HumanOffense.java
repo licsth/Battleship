@@ -4,11 +4,13 @@ import schiffeversenken.javaimpl.gui.OffenseGrid;
 
 public class HumanOffense extends OffensiveStrategy{
 
+    private final OffenseGrid grid;
+
     public HumanOffense() {
-        OffenseGrid grid = new OffenseGrid(this);
+        this.grid = new OffenseGrid(this);
     }
     @Override
-    public long getNextMove() {
+    public long computeNextMove() {
         // TODO wait for human to make move, return it
         throw new RuntimeException();
     }

@@ -1,8 +1,7 @@
 package schiffeversenken.javaimpl.strategies;
 
-import schiffeversenken.javaimpl.strategies.OffensiveStrategy;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,7 +20,7 @@ public class RandomGuesses extends OffensiveStrategy {
     }
 
     @Override
-    public long getNextMove() {
+    protected long computeNextMove() {
         long guess = guesses.remove(0);
         while((guess & (miss | hit | sunk)) != 0) {
             guess = guesses.remove(0);

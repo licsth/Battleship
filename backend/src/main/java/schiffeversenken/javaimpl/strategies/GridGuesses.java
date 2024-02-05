@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 /**
  * This offensive strategy guesses squares in a grid.
@@ -41,19 +40,20 @@ public class GridGuesses extends OffensiveStrategy {
     }
 
     @Override
-    public long getNextMove() {
+    protected long computeNextMove() {
         // shoot grid pattern
         if(!targeting) {
             return getNextGridShot();
         }
 
-
+        // TODO implement
         return 0;
     }
 
     @Override
-    public void update(long square, int state) {
-        super.update(square, state);
+    public void update(int state) {
+        super.update(state);
+        // TODO this is supposed to do something different here
     }
 
     private long getNextGridShot() {

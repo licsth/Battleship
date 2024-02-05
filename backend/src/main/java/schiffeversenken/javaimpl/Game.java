@@ -1,10 +1,8 @@
 package schiffeversenken.javaimpl;
 
-import schiffeversenken.javaimpl.players.BattleshipBot;
-import schiffeversenken.javaimpl.players.HumanPlayer;
 import schiffeversenken.javaimpl.players.Player;
-import schiffeversenken.javaimpl.strategies.RandomGuesses;
-import schiffeversenken.javaimpl.strategies.RandomPlacement;
+import schiffeversenken.javaimpl.strategies.HumanDefense;
+import schiffeversenken.javaimpl.strategies.HumanOffense;
 
 public class Game {
     Player p0;
@@ -12,12 +10,13 @@ public class Game {
     boolean p0Next;
 
     public Game() {
-        // first, all valid states are computed
-        Gamestates gs = new Gamestates(false);
-        long[] states = gs.getAllStates();
-        // when HumanPlayer is instantiated, the player also chooses their setup
-        p0 = new HumanPlayer();
-        p1 = new BattleshipBot(new RandomGuesses(), new RandomPlacement(states));
+        // TODO this should be its own thread
+        //Gamestates gs = new Gamestates(false);
+        //long[] states = gs.getAllStates();
+
+        p0 = new Player(new HumanOffense(), new HumanDefense());
+        // TODO wait until gameStates have been computed, then continue
+        //p1 = new Player(new RandomGuesses(), new RandomPlacement(states));
         p0Next = true;
 
         runGame();
@@ -28,15 +27,15 @@ public class Game {
         do {
             activePlayer = getActivePlayer();
             inactivePlayer = getInactivePlayer();
-            if(activePlayer.isRobot()) {
-                long square = activePlayer.getNextMove();
-                int state = inactivePlayer.shootSquare(square);
-                activePlayer.notify(square, state);
-                p0Next = !p0Next;
-            } else {
-                // TODO I dont actually know how this works
-            }
+            long square = activePlayer.getNextMove();
+            int state = inactivePlayer.shootSquare(square);
+            activePlayer.notify(state);
+            p0Next = !p0Next;
         } while (!gameOver());
+
+        // TODO display who won maybe?
+        p0.gameOver();
+        p1.gameOver();
     }
 
     private boolean gameOver() {
