@@ -7,28 +7,41 @@ import { newGrid } from "../utilities/array";
 import { BoardSizeInputSection } from "./BoardSizeInputSection";
 import { HeatMapLegend } from "./HeatMapLegend";
 import { ShipDisplay } from "./ShipDisplay";
+import { JavaShipDisplay } from "./JavaShipDisplay";
 import { shipShapesEqual } from "../utilities/shipShapesEqual";
 import { findSunkenShip } from "../utilities/findSunkenShip";
 import { AnalysisBoard } from "./AnalysisBoard";
 import { StupidDefenseBoard } from "./StupidDefenseBoard";
 import { trimShip } from "../utilities/trimShip";
 import { classNames } from "../utilities/classNames";
+import { JavaBoard } from "./JavaBoard";
 
 export enum GameMode {
   ANALYSIS = "analysis",
   STUPID_DEFENSIVE = "stupid_defensive",
+  JAVA_8x8 = "java_8x8"
 }
 
-export const Gameboard: FunctionComponent = ({}) => {
-  const [boardSize, setBoardSize] = useState<number>(5);
+export const Gameboard: FunctionComponent = ({ }) => {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.ANALYSIS);
+  const [boardSize, setBoardSize] = useState<number>(5);
 
   const [boardState, setBoardState] = useState<Board>(
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
   );
+
+  const standardShips = [
+    [[true, true]],
+    [[true, true]],
+    [[true, true]],
+    [[true, true, true]],
+    [[true, true, true]],
+    [[true, true, true]],
+    [[true, true, true, true]],
+  ];
 
   const [ships, setShips] = useState<ShipShape[]>([
     [[true, true]],
@@ -62,11 +75,20 @@ export const Gameboard: FunctionComponent = ({}) => {
     null
   );
 
+  useEffect(() => {
+    const newBoardSize = gameMode === GameMode.ANALYSIS ? 5 : 8;
+    setBoardSize(newBoardSize)
+    setBoardState(newGrid(newBoardSize, newBoardSize, () => ({ state: SquareState.UNKNOWN })));
+  }, [gameMode])
+
+
   return (
     <div
       className={classNames(
         "grid bg-slate-100 font-mono",
-        gameMode === GameMode.ANALYSIS ? "grid-cols-3" : "grid-cols-2"
+        gameMode === GameMode.ANALYSIS && "grid-cols-3",
+        gameMode === GameMode.STUPID_DEFENSIVE && "grid-cols-2",
+        gameMode === GameMode.JAVA_8x8 && "grid-cols-1"
       )}
     >
       {gameMode === GameMode.ANALYSIS && (
@@ -111,7 +133,12 @@ export const Gameboard: FunctionComponent = ({}) => {
               unsunkenShips={unsunkenShips}
             />
           )}
-          <button
+          {gameMode === GameMode.JAVA_8x8 && (
+            <JavaBoard
+              unsunkenShips={unsunkenShips}
+            />
+          )}
+          {gameMode !== GameMode.JAVA_8x8 && <button
             onClick={() => {
               setBoardState(
                 newGrid(boardSize, boardSize, () => ({
@@ -123,21 +150,39 @@ export const Gameboard: FunctionComponent = ({}) => {
             className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-44 shadow-sm"
           >
             Reset board
-          </button>
+          </button>}
+          {gameMode === GameMode.JAVA_8x8 && <button
+            onClick={() => {
+              <JavaBoard
+                unsunkenShips={unsunkenShips}
+              />
+            }}
+            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+          >
+            Confirm Layout
+          </button>}
           <div className="mt-5 text-center text-slate-600 text-[10px]">
             {showFullOutput && computationTime != null && (
               <span>Computation time: {computationTime}ms</span>
             )}
           </div>
+          {gameMode === GameMode.JAVA_8x8 && <div className="flex items-center justify-center">
+            <JavaShipDisplay
+              ships={standardShips}
+              setShips={setShips}
+              unsunkenShipIndices={unsunkenShipIndices}
+            />
+          </div>}
+
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      {gameMode !== GameMode.JAVA_8x8 && <div className="flex items-center justify-center">
         <ShipDisplay
           ships={ships}
           setShips={setShips}
           unsunkenShipIndices={unsunkenShipIndices}
         />
-      </div>
+      </div>}
     </div>
   );
 };

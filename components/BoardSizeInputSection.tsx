@@ -25,29 +25,30 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
         <div>
           <label className="block text-xs py-1 text-cyan-600">Game mode</label>
           <select
-            className="text-xs p-2 shadow-sm rounded"
-            value={gameMode}
-            onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
+              className="text-xs p-2 shadow-sm rounded"
+              value={gameMode}
+              onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
           >
             <option value={GameMode.ANALYSIS}>Analysis</option>
             <option value={GameMode.STUPID_DEFENSIVE}>Mobbing</option>
+            <option value={GameMode.JAVA_8x8}>Computer</option>
           </select>
         </div>
-        <div>
-          <label className="block text-xs py-1 text-cyan-600">Board size</label>
+        {gameMode !== GameMode.JAVA_8x8 ? <div>
+        <label className="block text-xs py-1 text-cyan-600">Board size</label>
           <input
-            type="number"
-            className="block shadow-sm p-1 text-center focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent rounded w-20"
-            min={1}
-            step={1}
-            value={boardSize}
-            onChange={(e) => {
-              const value = (e.target.value && parseInt(e.target.value)) || 0;
-              const newBoardSize = value;
-              onBoardSizeChange(newBoardSize);
-            }}
+              type="number"
+              className="block shadow-sm p-1 text-center focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent rounded w-20"
+              min={1}
+              step={1}
+              value={boardSize}
+              onChange={(e) => {
+                const value = (e.target.value && parseInt(e.target.value)) || 0;
+                const newBoardSize = value;
+                onBoardSizeChange(newBoardSize);
+              }}
           ></input>
-        </div>
+        </div> : null}
         <div>
           <label className="block text-xs py-1 text-cyan-600">
             Debug output
