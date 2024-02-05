@@ -12,6 +12,7 @@ import { findSunkenShip } from "../utilities/findSunkenShip";
 import { AnalysisBoard } from "./AnalysisBoard";
 import { StupidDefenseBoard } from "./StupidDefenseBoard";
 import { trimShip } from "../utilities/trimShip";
+import { classNames } from "../utilities/classNames";
 
 export enum GameMode {
   ANALYSIS = "analysis",
@@ -61,20 +62,18 @@ export const Gameboard: FunctionComponent = ({}) => {
     null
   );
 
-  useEffect(() => {
-    if (window.location.origin !== "http://localhost:3000") return;
-    fetch("http://localhost:8080/api/hallo")
-      .then(async (response) => {
-        console.log("Backend says", await response.text());
-      })
-      .catch((error) => console.error("Backend error", error));
-  }, []);
-
   return (
-    <div className="grid grid-cols-3 bg-slate-100 font-mono">
-      <div className="flex items-center pl-20">
-        <HeatMapLegend />
-      </div>
+    <div
+      className={classNames(
+        "grid bg-slate-100 font-mono",
+        gameMode === GameMode.ANALYSIS ? "grid-cols-3" : "grid-cols-2"
+      )}
+    >
+      {gameMode === GameMode.ANALYSIS && (
+        <div className="flex items-center pl-20">
+          <HeatMapLegend />
+        </div>
+      )}
       <div className="h-screen flex flex-col items-center justify-center content-center p-5">
         <BoardSizeInputSection
           boardSize={boardSize}

@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo } from "react";
+import { FunctionComponent, useMemo, useState } from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { BoardDisplay } from "./BoardDisplay";
 import {
@@ -21,6 +21,8 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
   setBoardState,
   unsunkenShips,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const unsunkenShipVariants = useMemo<ShipShapeVariant[]>(() => {
     return unsunkenShips.map((ship) => {
       const transposed = rotateShip(ship);
@@ -33,7 +35,31 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
     });
   }, [unsunkenShips]);
 
+  // function postGuess(square: number) {
+  //   fetch("http://localhost:8080/api/guess", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(square),
+  //   }).then(async (response) => {
+  //     console.log(await response.text());
+  //     return;
+  //   });
+  // }
+
+  // function requestNextMove() {
+  //   setIsLoading(true);
+  //   fetch("http://localhost:8080/api/nextMove").then(async (response) => {
+  //     console.log(await response.text());
+  //     setIsLoading(false);
+  //     return;
+  //   });
+  // }
+
   function userGuess(row: number, col: number) {
+    // requestNextMove();
+    // postGuess(row * boardState.length + col);
     const newState = [...boardState.map((row) => [...row])];
     newState[row][col].state = SquareState.MISSED;
     let possibleConfig = possibleConfigurations(
@@ -60,7 +86,11 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
 
   return (
     <div className="mb-5">
-      <BoardDisplay boardState={boardState} onFieldClick={userGuess} />
+      <BoardDisplay
+        boardState={boardState}
+        onFieldClick={userGuess}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
