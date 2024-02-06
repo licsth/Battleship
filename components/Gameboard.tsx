@@ -76,7 +76,7 @@ export const Gameboard: FunctionComponent = ({ }) => {
   );
 
   useEffect(() => {
-    const newBoardSize = gameMode === GameMode.ANALYSIS ? 5 : 8;
+    const newBoardSize = gameMode === GameMode.JAVA_8x8 ? 8 : 5;
     setBoardSize(newBoardSize)
     setBoardState(newGrid(newBoardSize, newBoardSize, () => ({ state: SquareState.UNKNOWN })));
   }, [gameMode])
