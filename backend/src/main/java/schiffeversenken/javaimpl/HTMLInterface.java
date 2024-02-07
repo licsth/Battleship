@@ -17,11 +17,11 @@ public class HTMLInterface {
     }
 
     @PostMapping("/api/guess")
-    public long guess(@RequestBody String guess) {
+    public int guess(@RequestBody String guess) {
       System.out.println("Received guess: " + guess);
       long square = 1L << (63-Integer.parseInt(guess));
       // TODO: return 2 if sunk, 1 if the guess is a hit, 0 if it's a miss
-      return square;
+      return 1;
     }
 
     @GetMapping("/api/nextMove")

@@ -5,7 +5,7 @@ import { newGrid } from "../utilities/array";
 import { JavaShipDisplay } from "./JavaShipDisplay";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 import { sinkShip } from "../utilities/sinkShip";
-import { sum } from "lodash";
+import { set, sum } from "lodash";
 
 interface Props {}
 
@@ -71,31 +71,31 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     });
   }
 
-  function postGuess(square: number) {
-    fetch("http://localhost:8080/api/guess", {
+  async function postGuess(square: number) {
+    setIsLoading(true);
+    const res = await fetch("http://localhost:8080/api/guess", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(square),
-    }).then(async (response) => {
-      console.log(await response.text());
-      return;
     });
+    const state = await res.text();
+    setIsLoading(false);
+    return Number(state);
   }
 
-  function requestNextMove() {
+  async function requestNextMove() {
     setIsLoading(true);
-    fetch("http://localhost:8080/api/nextMove").then(async (response) => {
-      console.log(await response.text());
-      setIsLoading(false);
-      return;
-    });
+    const res = await fetch("http://localhost:8080/api/nextMove");
+    const move = Number(await res.text());
+    console.log("Computer move:", move);
+    setIsLoading(false);
   }
 
-  function userGuess(row: number, col: number) {
+  async function userGuess(row: number, col: number) {
     if (attackState[row][col].state !== SquareState.UNKNOWN) return;
-    const state: number = 1;
+    const state: number = await postGuess(row * 8 + col);
     // TODO ask Java backend whether hit
     const newBoardState = [...attackState];
     if (state === 0) {
@@ -107,6 +107,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       sinkShip(newBoardState, row, col);
     }
     setAttackState(newBoardState);
+    requestNextMove();
   }
 
   function placeShip(row: number, col: number) {
