@@ -24,6 +24,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [defenseState, setDefenseState] = useState<Board>(
     newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
   );
+  const [defenseLayoutIsConfirmed, setDefenseLayoutIsConfirmed] =
+    useState(false);
 
   const ships = [
     [[true, true]],
@@ -85,6 +87,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   function placeShip(row: number, col: number) {
+    if (defenseLayoutIsConfirmed) return;
     const newBoardState = [...defenseState];
     newBoardState[row][col] = {
       state:
@@ -96,12 +99,17 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   function checkDefenseLayout() {
+    if (defenseLayoutIsConfirmed) return;
     // all ships are sunk
     const unsunkIndices = getUnsunkenShipIndicesInBoardState(
       defenseState,
       ships
     );
     let layoutIsValid = unsunkIndices.length === 0;
+    if (!layoutIsValid) {
+      alert("Invalid layout: not all ships are sunk.");
+      return;
+    }
     // no more sunk ships than expected
     const sunkSquareNumber = sum(
       defenseState.flatMap((row) =>
@@ -109,6 +117,10 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       )
     );
     layoutIsValid = layoutIsValid && sunkSquareNumber === 19;
+    if (!layoutIsValid) {
+      alert("Invalid layout: too many sunk ships");
+      return;
+    }
     // ships are not adjacent
     for (let row = 0; row < defenseState.length; row++) {
       for (let col = 0; col < defenseState[row].length; col++) {
@@ -121,15 +133,15 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       }
     }
     if (!layoutIsValid) {
-      alert("Invalid layout");
+      alert("Invalid layout: ships are adjacent.");
       return;
     }
-    alert("Valid layout.");
+    setDefenseLayoutIsConfirmed(true);
   }
 
   return (
-    <div className="mb-5">
-      <div className="flex justify-center mb-10">
+    <div>
+      <div className="flex justify-center mb-10 mt-4">
         <div
           className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer w-min px-3 py-2 rounded"
           onClick={() => startGame(Strategy.HideShips, Strategy.GridGuesses)}
@@ -144,12 +156,6 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             onFieldClick={placeShip}
             isLoading={isLoading}
           />
-          <button
-            onClick={checkDefenseLayout}
-            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
-          >
-            Confirm Layout
-          </button>
         </div>
         <div>
           <BoardDisplay
@@ -159,7 +165,16 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
           />
         </div>
       </div>
-
+      {!defenseLayoutIsConfirmed && (
+        <div className="flex justify-center my-4">
+          <button
+            onClick={checkDefenseLayout}
+            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+          >
+            Confirm Layout
+          </button>
+        </div>
+      )}
       <div className="flex items-center justify-center">
         <JavaShipDisplay
           ships={ships}
