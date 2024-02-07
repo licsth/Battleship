@@ -77,7 +77,9 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
             setBoardState(newState);
           }}
           fieldIsStriped={(row, col) =>
-            possibleConfigs?.[row]?.[col] === highestConfigurationCount
+            possibleConfigs?.[row]?.[col] === highestConfigurationCount &&
+            highestConfigurationCount !== 0 &&
+            boardState[row][col].state === SquareState.UNKNOWN
           }
           getFieldBackgroundColor={(row, col) => {
             if (
