@@ -8,6 +8,13 @@ import { sinkShip } from "../utilities/sinkShip";
 
 interface Props {}
 
+enum Strategy {
+  GridGuesses = "GridGuesses",
+  RandomGuesses = "RandomGuesses",
+  HideShips = "HideShips",
+  RandomPlacement = "RandomPlacement",
+}
+
 export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [attackState, setAttackState] = useState<Board>(
     newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
@@ -33,13 +40,6 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   );
 
   const [isLoading, setIsLoading] = useState(false);
-
-  enum Strategy {
-    GridGuesses = "GridGuesses",
-    RandomGuesses = "RandomGuesses",
-    HideShips = "HideShips",
-    RandomPlacement = "RandomPlacement",
-  }
 
   function startGame(ds: Strategy, os: Strategy) {
     // TODO make API call
@@ -68,7 +68,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   // }
 
   function userGuess(row: number, col: number) {
-    const state: number = 2;
+    if (attackState[row][col].state !== SquareState.UNKNOWN) return;
+    const state: number = 1;
     // TODO ask Java backend whether hit
     const newBoardState = [...attackState];
     if (state === 0) {
@@ -97,7 +98,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     <div className="mb-5">
       <div className="flex justify-center mb-10">
         <div
-          className="bg-blue-500 text-white cursor-pointer w-min px-3 py-2 rounded"
+          className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer w-min px-3 py-2 rounded"
           onClick={() => startGame(Strategy.HideShips, Strategy.GridGuesses)}
         >
           Start
