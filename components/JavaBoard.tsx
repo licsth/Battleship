@@ -5,6 +5,7 @@ import { newGrid } from "../utilities/array";
 import { JavaShipDisplay } from "./JavaShipDisplay";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 import { sinkShip } from "../utilities/sinkShip";
+import { sum } from "lodash";
 
 interface Props {}
 
@@ -94,6 +95,38 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     setDefenseState(newBoardState);
   }
 
+  function checkDefenseLayout() {
+    // all ships are sunk
+    const unsunkIndices = getUnsunkenShipIndicesInBoardState(
+      defenseState,
+      ships
+    );
+    let layoutIsValid = unsunkIndices.length === 0;
+    // no more sunk ships than expected
+    const sunkSquareNumber = sum(
+      defenseState.flatMap((row) =>
+        row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0))
+      )
+    );
+    layoutIsValid = layoutIsValid && sunkSquareNumber === 19;
+    // ships are not adjacent
+    for (let row = 0; row < defenseState.length; row++) {
+      for (let col = 0; col < defenseState[row].length; col++) {
+        if (defenseState[row][col].state === SquareState.SHIP_SUNK) {
+          layoutIsValid &&=
+            defenseState[row + 1]?.[col - 1]?.state !== SquareState.SHIP_SUNK;
+          layoutIsValid &&=
+            defenseState[row + 1]?.[col + 1]?.state !== SquareState.SHIP_SUNK;
+        }
+      }
+    }
+    if (!layoutIsValid) {
+      alert("Invalid layout");
+      return;
+    }
+    alert("Valid layout.");
+  }
+
   return (
     <div className="mb-5">
       <div className="flex justify-center mb-10">
@@ -112,7 +145,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             isLoading={isLoading}
           />
           <button
-            onClick={() => {}}
+            onClick={checkDefenseLayout}
             className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
           >
             Confirm Layout
