@@ -15,14 +15,15 @@ import { StupidDefenseBoard } from "./StupidDefenseBoard";
 import { trimShip } from "../utilities/trimShip";
 import { classNames } from "../utilities/classNames";
 import { JavaBoard } from "./JavaBoard";
+import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 
 export enum GameMode {
   ANALYSIS = "analysis",
   STUPID_DEFENSIVE = "stupid_defensive",
-  JAVA_8x8 = "java_8x8"
+  JAVA_8x8 = "java_8x8",
 }
 
-export const Gameboard: FunctionComponent = ({ }) => {
+export const Gameboard: FunctionComponent = ({}) => {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,23 +50,10 @@ export const Gameboard: FunctionComponent = ({ }) => {
     [[true, true, true]],
   ]);
 
-  const unsunkenShipIndices = useMemo(() => {
-    let indices = range(ships.length);
-
-    const boardStateCopy = boardState.map((row) =>
-      row.map((col) => ({ ...col }))
-    );
-    let sunkenShip: ShipShape | null = null;
-    while ((sunkenShip = trimShip(findSunkenShip(boardStateCopy))) != null) {
-      const shipIndex = ships.findIndex(
-        (ship, index) =>
-          indices.includes(index) &&
-          shipShapesEqual(sunkenShip as ShipShape, ship)
-      );
-      indices = indices.filter((index) => index !== shipIndex);
-    }
-    return indices;
-  }, [ships, boardState]);
+  const unsunkenShipIndices = useMemo(
+    () => getUnsunkenShipIndicesInBoardState(boardState, ships),
+    [ships, boardState]
+  );
 
   const unsunkenShips = useMemo(() => {
     return ships.filter((_, index) => unsunkenShipIndices.includes(index));
@@ -77,10 +65,13 @@ export const Gameboard: FunctionComponent = ({ }) => {
 
   useEffect(() => {
     const newBoardSize = gameMode === GameMode.JAVA_8x8 ? 8 : 5;
-    setBoardSize(newBoardSize)
-    setBoardState(newGrid(newBoardSize, newBoardSize, () => ({ state: SquareState.UNKNOWN })));
-  }, [gameMode])
-
+    setBoardSize(newBoardSize);
+    setBoardState(
+      newGrid(newBoardSize, newBoardSize, () => ({
+        state: SquareState.UNKNOWN,
+      }))
+    );
+  }, [gameMode]);
 
   return (
     <div
@@ -133,56 +124,38 @@ export const Gameboard: FunctionComponent = ({ }) => {
               unsunkenShips={unsunkenShips}
             />
           )}
-          {gameMode === GameMode.JAVA_8x8 && (
-            <JavaBoard
-              unsunkenShips={unsunkenShips}
-            />
+          {gameMode === GameMode.JAVA_8x8 && <JavaBoard />}
+          {gameMode !== GameMode.JAVA_8x8 && (
+            <button
+              onClick={() => {
+                setBoardState(
+                  newGrid(boardSize, boardSize, () => ({
+                    state: SquareState.UNKNOWN,
+                  }))
+                );
+                setPossibleConfigs(null);
+              }}
+              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-44 shadow-sm"
+            >
+              Reset board
+            </button>
           )}
-          {gameMode !== GameMode.JAVA_8x8 && <button
-            onClick={() => {
-              setBoardState(
-                newGrid(boardSize, boardSize, () => ({
-                  state: SquareState.UNKNOWN,
-                }))
-              );
-              setPossibleConfigs(null);
-            }}
-            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-44 shadow-sm"
-          >
-            Reset board
-          </button>}
-          {gameMode === GameMode.JAVA_8x8 && <button
-            onClick={() => {
-              <JavaBoard
-                unsunkenShips={unsunkenShips}
-              />
-            }}
-            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
-          >
-            Confirm Layout
-          </button>}
           <div className="mt-5 text-center text-slate-600 text-[10px]">
             {showFullOutput && computationTime != null && (
               <span>Computation time: {computationTime}ms</span>
             )}
           </div>
-          {gameMode === GameMode.JAVA_8x8 && <div className="flex items-center justify-center">
-            <JavaShipDisplay
-              ships={standardShips}
-              setShips={setShips}
-              unsunkenShipIndices={unsunkenShipIndices}
-            />
-          </div>}
-
         </div>
       </div>
-      {gameMode !== GameMode.JAVA_8x8 && <div className="flex items-center justify-center">
-        <ShipDisplay
-          ships={ships}
-          setShips={setShips}
-          unsunkenShipIndices={unsunkenShipIndices}
-        />
-      </div>}
+      {gameMode !== GameMode.JAVA_8x8 && (
+        <div className="flex items-center justify-center">
+          <ShipDisplay
+            ships={ships}
+            setShips={setShips}
+            unsunkenShipIndices={unsunkenShipIndices}
+          />
+        </div>
+      )}
     </div>
   );
 };

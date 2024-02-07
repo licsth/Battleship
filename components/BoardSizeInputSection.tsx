@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useMemo } from "react";
 import { Toggle } from "./Toggle";
 import { GameMode } from "./Gameboard";
 
@@ -25,18 +25,21 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
         <div>
           <label className="block text-xs py-1 text-cyan-600">Game mode</label>
           <select
-              className="text-xs p-2 shadow-sm rounded"
-              value={gameMode}
-              onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
+            className="text-xs p-2 shadow-sm rounded"
+            value={gameMode}
+            onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
           >
             <option value={GameMode.ANALYSIS}>Analysis</option>
             <option value={GameMode.STUPID_DEFENSIVE}>Mobbing</option>
             <option value={GameMode.JAVA_8x8}>Computer</option>
           </select>
         </div>
-        {gameMode !== GameMode.JAVA_8x8 ? <div>
-        <label className="block text-xs py-1 text-cyan-600">Board size</label>
-          <input
+        {gameMode !== GameMode.JAVA_8x8 ? (
+          <div>
+            <label className="block text-xs py-1 text-cyan-600">
+              Board size
+            </label>
+            <input
               type="number"
               className="block shadow-sm p-1 text-center focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent rounded w-20"
               min={1}
@@ -47,8 +50,9 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
                 const newBoardSize = value;
                 onBoardSizeChange(newBoardSize);
               }}
-          ></input>
-        </div> : null}
+            ></input>
+          </div>
+        ) : null}
         <div>
           <label className="block text-xs py-1 text-cyan-600">
             Debug output

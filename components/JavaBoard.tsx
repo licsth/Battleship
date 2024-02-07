@@ -2,106 +2,126 @@ import { FunctionComponent, useMemo, useState } from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { BoardDisplay } from "./BoardDisplay";
 import {
-    ShipShapeVariant,
-    possibleConfigurations,
+  ShipShapeVariant,
+  possibleConfigurations,
 } from "../utilities/bestGuess";
 import { ShipShape } from "../utilities/ship";
-import { shapesEqualWithoutRotation } from "../utilities/shipShapesEqual";
-import { rotateShip } from "../utilities/rotateShip";
-import { copySunkShips } from "../utilities/copySunkShips";
+import { shipShapesEqual } from "../utilities/shipShapesEqual";
 import { newGrid } from "../utilities/array";
+import { range } from "lodash";
+import { trimShip } from "../utilities/trimShip";
+import { findSunkenShip } from "../utilities/findSunkenShip";
+import { JavaShipDisplay } from "./JavaShipDisplay";
+import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
+import { sinkShip } from "../utilities/sinkShip";
 
-interface Props {
-    unsunkenShips: ShipShape[];
-}
+interface Props {}
 
-export const JavaBoard: FunctionComponent<Props> = ({
-    unsunkenShips,
-}) => {
+export const JavaBoard: FunctionComponent<Props> = ({}) => {
+  const [attackState, setAttackState] = useState<Board>(
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+  );
 
-    const [attackState, setAttackState] = useState<Board>(
-        newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
-    );
+  const [defenseState, setDefenseState] = useState<Board>(
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+  );
 
-    const [defenseState, setDefenseState] = useState<Board>(
-        newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
-    );
+  const ships = [
+    [[true, true]],
+    [[true, true]],
+    [[true, true]],
+    [[true, true, true]],
+    [[true, true, true]],
+    [[true, true, true]],
+    [[true, true, true, true]],
+  ];
 
-    const [isLoading, setIsLoading] = useState(false);
+  const unsunkenShipIndices = useMemo(
+    () => getUnsunkenShipIndicesInBoardState(attackState, ships),
+    [ships, attackState]
+  );
 
-    const unsunkenShipVariants = useMemo<ShipShapeVariant[]>(() => {
-        return unsunkenShips.map((ship) => {
-            const transposed = rotateShip(ship);
-            return {
-                normal: [...ship],
-                transposed: shapesEqualWithoutRotation(ship, transposed)
-                    ? null
-                    : transposed,
-            };
-        });
-    }, [unsunkenShips]);
+  const [isLoading, setIsLoading] = useState(false);
 
-    // function postGuess(square: number) {
-    //   fetch("http://localhost:8080/api/guess", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(square),
-    //   }).then(async (response) => {
-    //     console.log(await response.text());
-    //     return;
-    //   });
-    // }
+  // function postGuess(square: number) {
+  //   fetch("http://localhost:8080/api/guess", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(square),
+  //   }).then(async (response) => {
+  //     console.log(await response.text());
+  //     return;
+  //   });
+  // }
 
-    // function requestNextMove() {
-    //   setIsLoading(true);
-    //   fetch("http://localhost:8080/api/nextMove").then(async (response) => {
-    //     console.log(await response.text());
-    //     setIsLoading(false);
-    //     return;
-    //   });
-    // }
+  // function requestNextMove() {
+  //   setIsLoading(true);
+  //   fetch("http://localhost:8080/api/nextMove").then(async (response) => {
+  //     console.log(await response.text());
+  //     setIsLoading(false);
+  //     return;
+  //   });
+  // }
 
-    function userGuess(row: number, col: number) {
-        const state: number = 1;
-        // TODO ask Java backend whether hit
-        const newBoardState = [...attackState];
-        if (state === 0) {
-            newBoardState[row][col] = { state: SquareState.MISSED };
-        } else if (state === 1) {
-            newBoardState[row][col] = { state: SquareState.SHIP_HIT };
-        } else {
-            // TODO find connected component of square
-            // TODO set states for entire component
-        }
-        setAttackState(newBoardState);
+  function userGuess(row: number, col: number) {
+    const state: number = 2;
+    // TODO ask Java backend whether hit
+    const newBoardState = [...attackState];
+    if (state === 0) {
+      newBoardState[row][col] = { state: SquareState.MISSED };
+    } else if (state === 1) {
+      newBoardState[row][col] = { state: SquareState.SHIP_HIT };
+    } else {
+      newBoardState[row][col] = { state: SquareState.SHIP_HIT };
+      sinkShip(newBoardState, row, col);
     }
+    setAttackState(newBoardState);
+  }
 
-    function placeShip(row: number, col: number) {
-        const newBoardState = [...defenseState];
-        newBoardState[row][col] = { state: defenseState[row][col].state === SquareState.UNKNOWN ? SquareState.SHIP_SUNK : SquareState.UNKNOWN };
-        setDefenseState(newBoardState);
-    }
+  function placeShip(row: number, col: number) {
+    const newBoardState = [...defenseState];
+    newBoardState[row][col] = {
+      state:
+        defenseState[row][col].state === SquareState.UNKNOWN
+          ? SquareState.SHIP_SUNK
+          : SquareState.UNKNOWN,
+    };
+    setDefenseState(newBoardState);
+  }
 
-    return (
-        <div className="mb-5">
-            <div className="grid grid-cols-2 gap-x-12">
-                <div>
-                    <BoardDisplay
-                        boardState={defenseState}
-                        onFieldClick={placeShip}
-                        isLoading={isLoading}
-                    />
-                </div>
-                <div>
-                    <BoardDisplay
-                        boardState={attackState}
-                        onFieldClick={userGuess}
-                        isLoading={isLoading}
-                    />
-                </div>
-            </div>
+  return (
+    <div className="mb-5">
+      <div className="grid grid-cols-2 gap-x-12">
+        <div>
+          <BoardDisplay
+            boardState={defenseState}
+            onFieldClick={placeShip}
+            isLoading={isLoading}
+          />
+          <button
+            onClick={() => {}}
+            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+          >
+            Confirm Layout
+          </button>
         </div>
-    );
+        <div>
+          <BoardDisplay
+            boardState={attackState}
+            onFieldClick={userGuess}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center">
+        <JavaShipDisplay
+          ships={ships}
+          unsunkenShipIndices={unsunkenShipIndices}
+        />
+      </div>
+    </div>
+  );
 };

@@ -5,7 +5,7 @@ import { addSquareToShip } from "../utilities/addSquareToShip";
 
 interface Props {
   ships: ShipShape[];
-  setShips: (ships: ShipShape[]) => void;
+  setShips: ((ships: ShipShape[]) => void) | null;
   unsunkenShipIndices: number[];
 }
 
@@ -15,6 +15,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
   unsunkenShipIndices,
 }) => {
   function addToShip(shipIndex: number, row: number, col: number) {
+    if (!setShips) return;
     let ship = ships[shipIndex];
     ship = addSquareToShip(ship, row, col);
     setShips([
@@ -25,6 +26,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
   }
 
   function deleteShip(shipIndex: number) {
+    if (!setShips) return;
     setShips([...ships.slice(0, shipIndex), ...ships.slice(shipIndex + 1)]);
   }
 
@@ -82,14 +84,16 @@ export const ShipDisplay: FunctionComponent<Props> = ({
           </div>
         </div>
       ))}
-      <button
-        onClick={() => {
-          setShips([...ships, [[true]]]);
-        }}
-        className="bg-cyan-500 hover:bg-cyan-600 text-white rounded py-2 px-4 mb-2 shadow-sm caps block"
-      >
-        Add ship
-      </button>
+      {!!setShips && (
+        <button
+          onClick={() => {
+            setShips([...ships, [[true]]]);
+          }}
+          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded py-2 px-4 mb-2 shadow-sm caps block"
+        >
+          Add ship
+        </button>
+      )}
     </div>
   );
 };
