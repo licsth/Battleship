@@ -1,16 +1,7 @@
 import { FunctionComponent, useMemo, useState } from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { BoardDisplay } from "./BoardDisplay";
-import {
-  ShipShapeVariant,
-  possibleConfigurations,
-} from "../utilities/bestGuess";
-import { ShipShape } from "../utilities/ship";
-import { shipShapesEqual } from "../utilities/shipShapesEqual";
 import { newGrid } from "../utilities/array";
-import { range } from "lodash";
-import { trimShip } from "../utilities/trimShip";
-import { findSunkenShip } from "../utilities/findSunkenShip";
 import { JavaShipDisplay } from "./JavaShipDisplay";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 import { sinkShip } from "../utilities/sinkShip";
