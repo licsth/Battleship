@@ -162,7 +162,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   function placeShip(row: number, col: number) {
-    //if (defenseLayoutIsConfirmed) return;
+    if (defenseLayoutIsConfirmed) return;
     const newBoardState = [...defenseLayout];
     newBoardState[row][col] = {
       state:
