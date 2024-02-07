@@ -43,6 +43,17 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  enum Strategy {
+    GridGuesses = "GridGuesses",
+    RandomGuesses = "RandomGuesses",
+    HideShips = "HideShips",
+    RandomPlacement = "RandomPlacement",
+  }
+
+  function startGame(ds: Strategy, os: Strategy) {
+    // TODO make API call
+  }
+
   // function postGuess(square: number) {
   //   fetch("http://localhost:8080/api/guess", {
   //     method: "POST",
@@ -93,6 +104,14 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   return (
     <div className="mb-5">
+      <div className="flex justify-center mb-10">
+        <div
+          className="bg-blue-500 text-white cursor-pointer w-min px-3 py-2 rounded"
+          onClick={() => startGame(Strategy.HideShips, Strategy.GridGuesses)}
+        >
+          Start
+        </div>
+      </div>
       <div className="grid grid-cols-2 gap-x-12">
         <div>
           <BoardDisplay
