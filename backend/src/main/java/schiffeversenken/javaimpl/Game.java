@@ -1,56 +1,57 @@
 package schiffeversenken.javaimpl;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import schiffeversenken.javaimpl.players.Player;
-import schiffeversenken.javaimpl.strategies.HumanDefense;
-import schiffeversenken.javaimpl.strategies.HumanOffense;
+import schiffeversenken.javaimpl.strategies.*;
 
 public class Game {
-    Player p0;
-    Player p1;
-    boolean p0Next;
 
-    public Game() {
-        // TODO this should be its own thread
-        // Gamestates gs = new Gamestates(false);
-        // long[] states = gs.getAllStates();
+    public static final String GAME_STATES_FILENAME = "gamestates.bin";
 
-        p0 = new Player(new HumanOffense(), new HumanDefense());
-        // TODO wait until gameStates have been computed, then continue
-        // p1 = new Player(new RandomGuesses(), new RandomPlacement(states));
-        p0Next = true;
+    Player human;
+    Player computer;
+    boolean humanNext;
 
-        runGame();
+    public Game() throws FileNotFoundException, IOException {
+        // TODO this method is supposed to be called by the start button
+        // TODO this method needs to be passed the Strategies of the computer and apply
+        // them
+
+        if (false) { // Test whether strategies actually need to know all states
+            long[] states = Utils.readStatesFromFile();
+        }
+        human = new Player(new HumanOffense(), new HumanDefense());
+        computer = new Player(new RandomGuesses(), new RandomPlacement());
+        humanNext = true;
     }
 
-    public void startGame(String defensiveStrategy, String offensiveStrategy) {
+    // private void runGame() {
+    // Player activePlayer, inactivePlayer;
+    // do {
+    // activePlayer = getActivePlayer();
+    // inactivePlayer = getInactivePlayer();
+    // long square = activePlayer.getNextMove();
+    // int state = inactivePlayer.shootSquare(square);
+    // activePlayer.notify(state);
+    // humanNext = !humanNext;
+    // } while (!gameOver());
 
-    }
+    // // TODO display who won maybe?
+    // human.gameOver();
+    // computer.gameOver();
+    // }
 
-    private void runGame() {
-        Player activePlayer, inactivePlayer;
-        do {
-            activePlayer = getActivePlayer();
-            inactivePlayer = getInactivePlayer();
-            long square = activePlayer.getNextMove();
-            int state = inactivePlayer.shootSquare(square);
-            activePlayer.notify(state);
-            p0Next = !p0Next;
-        } while (!gameOver());
-
-        // TODO display who won maybe?
-        p0.gameOver();
-        p1.gameOver();
-    }
-
-    private boolean gameOver() {
-        return p0.hasLost() || p1.hasLost();
+    public boolean gameOver() {
+        return human.hasLost() || computer.hasLost();
     }
 
     private Player getActivePlayer() {
-        return p0Next ? p0 : p1;
+        return humanNext ? human : computer;
     }
 
     private Player getInactivePlayer() {
-        return p0Next ? p1 : p0;
+        return humanNext ? computer : human;
     }
 }
