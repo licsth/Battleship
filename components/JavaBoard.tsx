@@ -9,12 +9,25 @@ import { sum } from "lodash";
 
 interface Props {}
 
-enum Strategy {
-  GridGuesses = "GridGuesses",
-  RandomGuesses = "RandomGuesses",
+enum DefensiveStrategy {
   HideShips = "HideShips",
   RandomPlacement = "RandomPlacement",
 }
+
+enum OffensiveStrategy {
+  GridGuesses = "GridGuesses",
+  RandomGuesses = "RandomGuesses",
+}
+
+const ships = [
+  [[true, true]],
+  [[true, true]],
+  [[true, true]],
+  [[true, true, true]],
+  [[true, true, true]],
+  [[true, true, true]],
+  [[true, true, true, true]],
+];
 
 export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [attackState, setAttackState] = useState<Board>(
@@ -27,15 +40,12 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [defenseLayoutIsConfirmed, setDefenseLayoutIsConfirmed] =
     useState(false);
 
-  const ships = [
-    [[true, true]],
-    [[true, true]],
-    [[true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true, true]],
-  ];
+  const [defensiveStrategy, setDefensiveStrategy] = useState(
+    DefensiveStrategy.HideShips
+  );
+  const [offensiveStrategy, setOffensiveStrategy] = useState(
+    OffensiveStrategy.GridGuesses
+  );
 
   const unsunkenShipIndices = useMemo(
     () => getUnsunkenShipIndicesInBoardState(attackState, ships),
@@ -44,31 +54,44 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  function startGame(ds: Strategy, os: Strategy) {
+  function startGame(
+    defensiveStrategy: DefensiveStrategy,
+    offensiveStrategy: OffensiveStrategy
+  ) {
     // TODO make API call
+    fetch("http://localhost:8080/api/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ defensiveStrategy, offensiveStrategy }),
+    }).then(async (response) => {
+      console.log(await response.text());
+      return;
+    });
   }
 
-  // function postGuess(square: number) {
-  //   fetch("http://localhost:8080/api/guess", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(square),
-  //   }).then(async (response) => {
-  //     console.log(await response.text());
-  //     return;
-  //   });
-  // }
+  function postGuess(square: number) {
+    fetch("http://localhost:8080/api/guess", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(square),
+    }).then(async (response) => {
+      console.log(await response.text());
+      return;
+    });
+  }
 
-  // function requestNextMove() {
-  //   setIsLoading(true);
-  //   fetch("http://localhost:8080/api/nextMove").then(async (response) => {
-  //     console.log(await response.text());
-  //     setIsLoading(false);
-  //     return;
-  //   });
-  // }
+  function requestNextMove() {
+    setIsLoading(true);
+    fetch("http://localhost:8080/api/nextMove").then(async (response) => {
+      console.log(await response.text());
+      setIsLoading(false);
+      return;
+    });
+  }
 
   function userGuess(row: number, col: number) {
     if (attackState[row][col].state !== SquareState.UNKNOWN) return;
@@ -105,8 +128,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       defenseState,
       ships
     );
-    let layoutIsValid = unsunkIndices.length === 0;
-    if (!layoutIsValid) {
+    if (unsunkIndices.length !== 0) {
       alert("Invalid layout: not all ships are sunk.");
       return;
     }
@@ -116,8 +138,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0))
       )
     );
-    layoutIsValid = layoutIsValid && sunkSquareNumber === 19;
-    if (!layoutIsValid) {
+    if (sunkSquareNumber !== 19) {
       alert("Invalid layout: too many sunk ships");
       return;
     }
@@ -125,28 +146,63 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     for (let row = 0; row < defenseState.length; row++) {
       for (let col = 0; col < defenseState[row].length; col++) {
         if (defenseState[row][col].state === SquareState.SHIP_SUNK) {
-          layoutIsValid &&=
-            defenseState[row + 1]?.[col - 1]?.state !== SquareState.SHIP_SUNK;
-          layoutIsValid &&=
-            defenseState[row + 1]?.[col + 1]?.state !== SquareState.SHIP_SUNK;
+          if (
+            defenseState[row + 1]?.[col - 1]?.state === SquareState.SHIP_SUNK ||
+            defenseState[row + 1]?.[col + 1]?.state === SquareState.SHIP_SUNK
+          ) {
+            alert("Invalid layout: ships are adjacent.");
+            return;
+          }
         }
       }
-    }
-    if (!layoutIsValid) {
-      alert("Invalid layout: ships are adjacent.");
-      return;
     }
     setDefenseLayoutIsConfirmed(true);
   }
 
   return (
     <div>
-      <div className="flex justify-center mb-10 mt-4">
-        <div
-          className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer w-min px-3 py-2 rounded"
-          onClick={() => startGame(Strategy.HideShips, Strategy.GridGuesses)}
-        >
-          Start
+      <div className="flex justify-center mb-8 mt-4 gap-x-5 items-center">
+        <div>
+          <label className="block text-[10px] mb-1 text-cyan-700">
+            Defensive strategy
+          </label>
+          <select
+            className="rounded text-xs px-1 py-2 shadow-sm"
+            onChange={(e) =>
+              setDefensiveStrategy(e.target.value as DefensiveStrategy)
+            }
+          >
+            {Object.values(DefensiveStrategy).map((strat) => (
+              <option key={strat} value={strat}>
+                {strat}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] mb-1 text-cyan-700">
+            Offensive strategy
+          </label>
+          <select
+            className="rounded text-xs px-1 py-2 shadow-sm"
+            onChange={(e) =>
+              setOffensiveStrategy(e.target.value as OffensiveStrategy)
+            }
+          >
+            {Object.values(OffensiveStrategy).map((strat) => (
+              <option key={strat} value={strat}>
+                {strat}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <div
+            className="bg-cyan-500 hover:bg-cyan-600 text-white cursor-pointer w-min px-3 py-2 rounded"
+            onClick={() => startGame(defensiveStrategy, offensiveStrategy)}
+          >
+            Start
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-12">

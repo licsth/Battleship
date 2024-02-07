@@ -53,12 +53,14 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
             ></input>
           </div>
         ) : null}
-        <div>
-          <label className="block text-xs py-1 text-cyan-600">
-            Debug output
-          </label>
-          <Toggle value={showFullOutput} onChange={setShowFullOutput} />
-        </div>
+        {gameMode === GameMode.ANALYSIS && (
+          <div>
+            <label className="block text-xs py-1 text-cyan-600">
+              Debug output
+            </label>
+            <Toggle value={showFullOutput} onChange={setShowFullOutput} />
+          </div>
+        )}
       </div>
     </>
   );

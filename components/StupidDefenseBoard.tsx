@@ -35,28 +35,6 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
     });
   }, [unsunkenShips]);
 
-  // function postGuess(square: number) {
-  //   fetch("http://localhost:8080/api/guess", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(square),
-  //   }).then(async (response) => {
-  //     console.log(await response.text());
-  //     return;
-  //   });
-  // }
-
-  // function requestNextMove() {
-  //   setIsLoading(true);
-  //   fetch("http://localhost:8080/api/nextMove").then(async (response) => {
-  //     console.log(await response.text());
-  //     setIsLoading(false);
-  //     return;
-  //   });
-  // }
-
   function userGuess(row: number, col: number) {
     // requestNextMove();
     // postGuess(row * boardState.length + col);

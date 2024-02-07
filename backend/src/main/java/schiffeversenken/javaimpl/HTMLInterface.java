@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:3000")
 public class HTMLInterface {
 
+    @PostMapping("/api/start")
+    public void start(@RequestBody StrategiesDto strategies) {
+      // TODO start precomputations & set up strategies
+      System.out.println("Received start request with strategies: " + strategies.defensiveStrategy + " " + strategies.offensiveStrategy);
+    }
+
     @PostMapping("/api/guess")
     public long guess(@RequestBody String guess) {
       System.out.println("Received guess: " + guess);
