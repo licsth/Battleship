@@ -1,12 +1,22 @@
 import { Board, SquareState } from "./boardState";
 import { ShipShape } from "./ship";
 
-export function findSunkenShip(boardState: Board, startX?: number, startY?: number): ShipShape {
-  return findConnectedComponent(boardState.map(row => row.map(col => ({ ...col }))), SquareState.SHIP_SUNK, startX, startY);
+export function copyBoardState(boardState: Board): Board {
+  return boardState.map(row => row.map(col => ({ ...col })));
 }
 
+/**
+ * also overwrites the boardState with MISSED
+ */
+export function findSunkenShip(boardState: Board, startX?: number, startY?: number): ShipShape {
+  return findConnectedComponent(boardState, SquareState.SHIP_SUNK, startX, startY);
+}
+
+/**
+ * also overwrites the boardState with MISSED
+ */
 export function findHitShip(boardState: Board, startX?: number, startY?: number): ShipShape {
-  return findConnectedComponent(boardState.map(row => row.map(col => ({ ...col }))), SquareState.SHIP_HIT, startX, startY);
+  return findConnectedComponent(boardState, SquareState.SHIP_HIT, startX, startY);
 }
 
 function findConnectedComponent(boardState: Board, searchState: SquareState, startX?: number, startY?: number,): ShipShape {

@@ -2,15 +2,13 @@ import { range } from "lodash";
 import { Board } from "./boardState";
 import { ShipShape } from "./ship";
 import { trimShip } from "./trimShip";
-import { findSunkenShip } from "./findSunkenShip";
+import { copyBoardState, findSunkenShip } from "./findSunkenShip";
 import { shipShapesEqual } from "./shipShapesEqual";
 
 export function getUnsunkenShipIndicesInBoardState(boardState: Board, ships: ShipShape[]): number[] {
   let indices = range(ships.length);
 
-  const boardStateCopy = boardState.map((row) =>
-    row.map((col) => ({ ...col }))
-  );
+  const boardStateCopy = copyBoardState(boardState);
   let sunkenShip: ShipShape | null = null;
   while ((sunkenShip = trimShip(findSunkenShip(boardStateCopy))) != null) {
     const shipIndex = ships.findIndex(

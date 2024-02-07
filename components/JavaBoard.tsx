@@ -6,7 +6,11 @@ import { JavaShipDisplay } from "./JavaShipDisplay";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 import { sinkShip } from "../utilities/sinkShip";
 import { set, sum } from "lodash";
-import { findHitShip, findSunkenShip } from "../utilities/findSunkenShip";
+import {
+  copyBoardState,
+  findHitShip,
+  findSunkenShip,
+} from "../utilities/findSunkenShip";
 import {
   shapesEqualWithoutRotation,
   shipShapesEqual,
@@ -109,8 +113,12 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     let returnState = 0;
     if (defenseLayout[row][col].state === SquareState.SHIP_SUNK) {
       defenseState[row][col] = { state: SquareState.SHIP_HIT };
-      const hitShip = findHitShip(defenseState, col, row);
-      const fullShip: boolean[][] = findSunkenShip(defenseLayout, col, row);
+      const hitShip = findHitShip(copyBoardState(defenseState), col, row);
+      const fullShip: boolean[][] = findSunkenShip(
+        copyBoardState(defenseLayout),
+        col,
+        row
+      );
       if (shapesEqualWithoutRotation(hitShip, fullShip)) {
         returnState = 2;
       } else {
@@ -120,7 +128,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       defenseState[row][col] = { state: SquareState.MISSED };
     }
     console.log("Returning state", returnState);
-    setDefenseState(defenseState);
+    setDefenseState([...defenseState]);
     await fetch("http://localhost:8080/api/respondToGuess", {
       method: "POST",
       headers: {
@@ -254,7 +262,17 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         <div className="grid grid-cols-2 gap-x-12">
           <div>
             <BoardDisplay
-              boardState={defenseLayout}
+              boardState={
+                defenseLayoutIsConfirmed ? defenseState : defenseLayout
+              }
+              getFieldBackgroundColor={(row, col) => {
+                if (
+                  defenseLayoutIsConfirmed &&
+                  defenseLayout[row][col].state === SquareState.SHIP_SUNK
+                ) {
+                  return "hsl(200, 60%, 80%)";
+                }
+              }}
               onFieldClick={placeShip}
               isLoading={isLoading}
             />
@@ -267,7 +285,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
               getFieldBackgroundColor={(row, col) => {
                 if (!currentGuess) return undefined;
                 if (row === currentGuess[0] && col === currentGuess[1])
-                  return "hsl(200, 50%, 65%)";
+                  return "hsl(270, 60%, 80%)";
               }}
             />
           </div>
