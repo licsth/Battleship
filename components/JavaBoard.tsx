@@ -6,6 +6,11 @@ import { JavaShipDisplay } from "./JavaShipDisplay";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
 import { sinkShip } from "../utilities/sinkShip";
 import { set, sum } from "lodash";
+import { findHitShip, findSunkenShip } from "../utilities/findSunkenShip";
+import {
+  shapesEqualWithoutRotation,
+  shipShapesEqual,
+} from "../utilities/shipShapesEqual";
 
 interface Props {}
 
@@ -34,6 +39,9 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
   );
 
+  const [defenseLayout, setDefenseLayout] = useState<Board>(
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+  );
   const [defenseState, setDefenseState] = useState<Board>(
     newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
   );
@@ -54,8 +62,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     () =>
       defenseLayoutIsConfirmed
         ? getUnsunkenShipIndicesInBoardState(attackState, ships)
-        : getUnsunkenShipIndicesInBoardState(defenseState, ships),
-    [ships, attackState, defenseState, defenseLayoutIsConfirmed]
+        : getUnsunkenShipIndicesInBoardState(defenseLayout, ships),
+    [ships, attackState, defenseLayout, defenseLayoutIsConfirmed]
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -95,7 +103,31 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     setIsLoading(true);
     const res = await fetch("http://localhost:8080/api/nextMove");
     const move = Number(await res.text());
-    console.log("Computer move:", move);
+    const row = Math.floor(move / 8);
+    const col = move % 8;
+    console.log("Computer move:", move, `(${row}, ${col})`);
+    let returnState = 0;
+    if (defenseLayout[row][col].state === SquareState.SHIP_SUNK) {
+      defenseState[row][col] = { state: SquareState.SHIP_HIT };
+      const hitShip = findHitShip(defenseState, col, row);
+      const fullShip: boolean[][] = findSunkenShip(defenseLayout, col, row);
+      if (shapesEqualWithoutRotation(hitShip, fullShip)) {
+        returnState = 2;
+      } else {
+        returnState = 1;
+      }
+    } else {
+      defenseState[row][col] = { state: SquareState.MISSED };
+    }
+    console.log("Returning state", returnState);
+    setDefenseState(defenseState);
+    await fetch("http://localhost:8080/api/respondToGuess", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ guess: move, state: returnState }),
+    });
     setIsLoading(false);
   }
 
@@ -122,22 +154,22 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   function placeShip(row: number, col: number) {
-    if (defenseLayoutIsConfirmed) return;
-    const newBoardState = [...defenseState];
+    //if (defenseLayoutIsConfirmed) return;
+    const newBoardState = [...defenseLayout];
     newBoardState[row][col] = {
       state:
-        defenseState[row][col].state === SquareState.UNKNOWN
+        defenseLayout[row][col].state === SquareState.UNKNOWN
           ? SquareState.SHIP_SUNK
           : SquareState.UNKNOWN,
     };
-    setDefenseState(newBoardState);
+    setDefenseLayout(newBoardState);
   }
 
   function checkDefenseLayout() {
     if (defenseLayoutIsConfirmed) return;
     // all ships are sunk
     const unsunkIndices = getUnsunkenShipIndicesInBoardState(
-      defenseState,
+      defenseLayout,
       ships
     );
     if (unsunkIndices.length !== 0) {
@@ -146,7 +178,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     }
     // no more sunk ships than expected
     const sunkSquareNumber = sum(
-      defenseState.flatMap((row) =>
+      defenseLayout.flatMap((row) =>
         row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0))
       )
     );
@@ -155,12 +187,13 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       return;
     }
     // ships are not adjacent
-    for (let row = 0; row < defenseState.length; row++) {
-      for (let col = 0; col < defenseState[row].length; col++) {
-        if (defenseState[row][col].state === SquareState.SHIP_SUNK) {
+    for (let row = 0; row < defenseLayout.length; row++) {
+      for (let col = 0; col < defenseLayout[row].length; col++) {
+        if (defenseLayout[row][col].state === SquareState.SHIP_SUNK) {
           if (
-            defenseState[row + 1]?.[col - 1]?.state === SquareState.SHIP_SUNK ||
-            defenseState[row + 1]?.[col + 1]?.state === SquareState.SHIP_SUNK
+            defenseLayout[row + 1]?.[col - 1]?.state ===
+              SquareState.SHIP_SUNK ||
+            defenseLayout[row + 1]?.[col + 1]?.state === SquareState.SHIP_SUNK
           ) {
             alert("Invalid layout: ships are adjacent.");
             return;
@@ -221,7 +254,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         <div className="grid grid-cols-2 gap-x-12">
           <div>
             <BoardDisplay
-              boardState={defenseState}
+              boardState={defenseLayout}
               onFieldClick={placeShip}
               isLoading={isLoading}
             />

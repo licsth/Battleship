@@ -24,6 +24,12 @@ public class HTMLInterface {
       return 1;
     }
 
+    @PostMapping("/api/respondToGuess")
+    public void guess(@RequestBody GuessResponse guessResponse) {
+      System.out.println("Guess " + guessResponse.guess + " returned state " + guessResponse.state);
+      // TODO: update offensive strategy's internal state
+    }
+
     @GetMapping("/api/nextMove")
     public long getNextMove() {
       // wait 3 seconds
