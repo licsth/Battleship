@@ -41,6 +41,18 @@ export const JavaBoard: FunctionComponent<Props> = ({
         });
     }, [unsunkenShips]);
 
+    enum Strategy {
+        GridGuesses = "GridGuesses",
+        RandomGuesses = "RandomGuesses",
+        HideShips = "HideShips",
+        RandomPlacement = "RandomPlacement"
+    }
+
+    function startGame(ds: Strategy, os: Strategy) {
+        // TODO make API call
+
+    }
+
     // function postGuess(square: number) {
     //   fetch("http://localhost:8080/api/guess", {
     //     method: "POST",
@@ -84,9 +96,13 @@ export const JavaBoard: FunctionComponent<Props> = ({
         setDefenseState(newBoardState);
     }
 
+    // TODO currently it always uses HideShips and GridGuesses
     return (
         <div className="mb-5">
-            <div className="grid grid-cols-2 gap-x-12">
+            <div className="flex gap-x-12">
+                <div className="bg-blue-500 text-white cursor-pointer" onClick={() => startGame(Strategy.HideShips, Strategy.GridGuesses)}>
+                    Start
+                </div>
                 <div>
                     <BoardDisplay
                         boardState={defenseState}

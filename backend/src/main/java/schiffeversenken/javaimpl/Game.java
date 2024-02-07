@@ -11,15 +11,19 @@ public class Game {
 
     public Game() {
         // TODO this should be its own thread
-        //Gamestates gs = new Gamestates(false);
-        //long[] states = gs.getAllStates();
+        // Gamestates gs = new Gamestates(false);
+        // long[] states = gs.getAllStates();
 
         p0 = new Player(new HumanOffense(), new HumanDefense());
         // TODO wait until gameStates have been computed, then continue
-        //p1 = new Player(new RandomGuesses(), new RandomPlacement(states));
+        // p1 = new Player(new RandomGuesses(), new RandomPlacement(states));
         p0Next = true;
 
         runGame();
+    }
+
+    public void startGame(String defensiveStrategy, String offensiveStrategy) {
+
     }
 
     private void runGame() {
