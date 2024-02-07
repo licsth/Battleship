@@ -205,37 +205,39 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-x-12">
-        <div>
-          <BoardDisplay
-            boardState={defenseState}
-            onFieldClick={placeShip}
-            isLoading={isLoading}
+      <div>
+        <div className="grid grid-cols-2 gap-x-12">
+          <div>
+            <BoardDisplay
+              boardState={defenseState}
+              onFieldClick={placeShip}
+              isLoading={isLoading}
+            />
+          </div>
+          <div>
+            <BoardDisplay
+              boardState={attackState}
+              onFieldClick={userGuess}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
+        {!defenseLayoutIsConfirmed && (
+          <div className="flex justify-center my-4">
+            <button
+              onClick={checkDefenseLayout}
+              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+            >
+              Confirm Layout
+            </button>
+          </div>
+        )}
+        <div className="flex items-center justify-center">
+          <JavaShipDisplay
+            ships={ships}
+            unsunkenShipIndices={unsunkenShipIndices}
           />
         </div>
-        <div>
-          <BoardDisplay
-            boardState={attackState}
-            onFieldClick={userGuess}
-            isLoading={isLoading}
-          />
-        </div>
-      </div>
-      {!defenseLayoutIsConfirmed && (
-        <div className="flex justify-center my-4">
-          <button
-            onClick={checkDefenseLayout}
-            className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
-          >
-            Confirm Layout
-          </button>
-        </div>
-      )}
-      <div className="flex items-center justify-center">
-        <JavaShipDisplay
-          ships={ships}
-          unsunkenShipIndices={unsunkenShipIndices}
-        />
       </div>
     </div>
   );
