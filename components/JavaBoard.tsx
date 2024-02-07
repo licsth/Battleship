@@ -46,10 +46,16 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [offensiveStrategy, setOffensiveStrategy] = useState(
     OffensiveStrategy.GridGuesses
   );
+  const [currentGuess, setCurrentGuess] = useState<[number, number] | null>(
+    null
+  );
 
   const unsunkenShipIndices = useMemo(
-    () => getUnsunkenShipIndicesInBoardState(attackState, ships),
-    [ships, attackState]
+    () =>
+      defenseLayoutIsConfirmed
+        ? getUnsunkenShipIndicesInBoardState(attackState, ships)
+        : getUnsunkenShipIndicesInBoardState(defenseState, ships),
+    [ships, attackState, defenseState, defenseLayoutIsConfirmed]
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +99,11 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     setIsLoading(false);
   }
 
-  async function userGuess(row: number, col: number) {
+  async function confirmGuess() {
+    if (!currentGuess) return;
+    const row = currentGuess[0];
+    const col = currentGuess[1];
+    if (!defenseLayoutIsConfirmed) return;
     if (attackState[row][col].state !== SquareState.UNKNOWN) return;
     const state: number = await postGuess(row * 8 + col);
     // TODO ask Java backend whether hit
@@ -106,6 +116,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       newBoardState[row][col] = { state: SquareState.SHIP_HIT };
       sinkShip(newBoardState, row, col);
     }
+    setCurrentGuess(null);
     setAttackState(newBoardState);
     requestNextMove();
   }
@@ -218,18 +229,32 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
           <div>
             <BoardDisplay
               boardState={attackState}
-              onFieldClick={userGuess}
+              onFieldClick={(row, col) => setCurrentGuess([row, col])}
               isLoading={isLoading}
+              getFieldBackgroundColor={(row, col) => {
+                if (!currentGuess) return undefined;
+                if (row === currentGuess[0] && col === currentGuess[1])
+                  return "hsl(200, 50%, 65%)";
+              }}
             />
           </div>
         </div>
-        {!defenseLayoutIsConfirmed && (
+        {!defenseLayoutIsConfirmed ? (
           <div className="flex justify-center my-4">
             <button
               onClick={checkDefenseLayout}
               className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
             >
               Confirm Layout
+            </button>
+          </div>
+        ) : (
+          <div className="flex justify-center my-4">
+            <button
+              onClick={confirmGuess}
+              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+            >
+              Guess
             </button>
           </div>
         )}
