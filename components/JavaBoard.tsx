@@ -71,7 +71,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     [ships, attackState, defenseLayout, defenseLayoutIsConfirmed]
   );
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [defenseIsLoading, setDefenseIsLoading] = useState(false);
+  const [offenseIsLoading, setOffenseIsLoading] = useState(false);
 
   function startGame(
     defensiveStrategy: DefensiveStrategy,
@@ -96,20 +97,20 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   async function postGuess(square: number) {
-    setIsLoading(true);
+    setOffenseIsLoading(true);
     const res = await fetch("http://localhost:8080/api/guess", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(square),
-    }).finally(() => setIsLoading(false));
+    }).finally(() => setOffenseIsLoading(false));
     const state = await res.text();
     return Number(state);
   }
 
   async function requestNextMove() {
-    setIsLoading(true);
+    setDefenseIsLoading(true);
     const res = await fetch("http://localhost:8080/api/nextMove");
     const move = Number(await res.text());
     const row = Math.floor(move / 8);
@@ -140,7 +141,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ guess: move, state: returnState }),
-    }).finally(() => setIsLoading(false));
+    }).finally(() => setDefenseIsLoading(false));
   }
 
   async function confirmGuess() {
@@ -288,15 +289,24 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
                     return "hsl(200, 60%, 80%)";
                   }
                 }}
+                disableLoadingAnimation={(row, col) => {
+                  if (
+                    defenseLayoutIsConfirmed &&
+                    defenseLayout[row][col].state === SquareState.SHIP_SUNK
+                  ) {
+                    return true;
+                  }
+                  return false;
+                }}
                 onFieldClick={placeShip}
-                isLoading={isLoading}
+                isLoading={defenseIsLoading}
               />
             </div>
             <div>
               <BoardDisplay
                 boardState={attackState}
                 onFieldClick={(row, col) => setCurrentGuess([row, col])}
-                isLoading={isLoading}
+                isLoading={offenseIsLoading}
                 getFieldBackgroundColor={(row, col) => {
                   if (!currentGuess) return undefined;
                   if (row === currentGuess[0] && col === currentGuess[1])

@@ -10,6 +10,7 @@ interface Props {
   getFieldBackgroundColor?: (row: number, col: number) => string | undefined;
   fieldIsStriped?: (row: number, col: number) => boolean;
   fieldContent?: (row: number, col: number) => JSX.Element | null;
+  disableLoadingAnimation?: (row: number, col: number) => boolean;
 }
 
 export const BoardDisplay: FunctionComponent<Props> = ({
@@ -19,6 +20,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
   getFieldBackgroundColor,
   fieldIsStriped,
   fieldContent,
+  disableLoadingAnimation,
 }) => {
   const boardSize = boardState.length;
 
@@ -41,6 +43,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
                   `bg-slate-200 p-1`,
                 boardState[row][col].state === SquareState.UNKNOWN &&
                   isLoading &&
+                  !disableLoadingAnimation?.(row, col) &&
                   `bg-slate-300 p-1 loading`,
                 fieldIsStriped?.(row, col) && "striped"
               )}
