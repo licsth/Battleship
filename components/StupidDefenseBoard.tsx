@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import { Board, SquareState } from "../utilities/boardState";
 import { BoardDisplay } from "./BoardDisplay";
 import {
@@ -22,6 +22,18 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
   unsunkenShips,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [guessCount, setGuessCount] = useState(0);
+
+  useEffect(() => {
+    if (
+      boardState.every((row) =>
+        row.every((square) => square.state === SquareState.UNKNOWN)
+      )
+    ) {
+      // reset count on board reset
+      setGuessCount(0);
+    }
+  }, [boardState]);
 
   const unsunkenShipVariants = useMemo<ShipShapeVariant[]>(() => {
     return unsunkenShips.map((ship) => {
@@ -36,8 +48,10 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
   }, [unsunkenShips]);
 
   function userGuess(row: number, col: number) {
-    // requestNextMove();
-    // postGuess(row * boardState.length + col);
+    if (boardState[row][col].state !== SquareState.UNKNOWN) {
+      return;
+    }
+    setGuessCount(guessCount + 1);
     const newState = [...boardState.map((row) => [...row])];
     newState[row][col].state = SquareState.MISSED;
     let possibleConfig = possibleConfigurations(
@@ -64,6 +78,7 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
 
   return (
     <div className="mb-5">
+      <div className="text-sm text-center mb-3">Guess count: {guessCount}</div>
       <BoardDisplay
         boardState={boardState}
         onFieldClick={userGuess}
