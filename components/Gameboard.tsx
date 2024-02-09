@@ -16,10 +16,12 @@ import { trimShip } from "../utilities/trimShip";
 import { classNames } from "../utilities/classNames";
 import { JavaBoard } from "./JavaBoard";
 import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
+import { NiceBoard } from "./NiceBoard";
 
 export enum GameMode {
   ANALYSIS = "analysis",
   STUPID_DEFENSIVE = "stupid_defensive",
+  NICE_DEFENSIVE = "nice_defensive",
   JAVA_8x8 = "java_8x8",
 }
 
@@ -79,6 +81,7 @@ export const Gameboard: FunctionComponent = ({}) => {
         "grid bg-slate-100 font-mono",
         gameMode === GameMode.ANALYSIS && "grid-cols-3",
         gameMode === GameMode.STUPID_DEFENSIVE && "grid-cols-2",
+        gameMode === GameMode.NICE_DEFENSIVE && "grid-cols-2",
         gameMode === GameMode.JAVA_8x8 && "grid-cols-1"
       )}
     >
@@ -119,6 +122,13 @@ export const Gameboard: FunctionComponent = ({}) => {
           )}
           {gameMode === GameMode.STUPID_DEFENSIVE && (
             <StupidDefenseBoard
+              boardState={boardState}
+              setBoardState={setBoardState}
+              unsunkenShips={unsunkenShips}
+            />
+          )}
+          {gameMode === GameMode.NICE_DEFENSIVE && (
+            <NiceBoard
               boardState={boardState}
               setBoardState={setBoardState}
               unsunkenShips={unsunkenShips}

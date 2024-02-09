@@ -26,4 +26,5 @@ export function sinkShip(boardState: Board, row: number, col: number) {
       }
     }
   }
+  return sunkenShip;
 }

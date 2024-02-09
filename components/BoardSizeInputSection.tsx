@@ -31,6 +31,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
           >
             <option value={GameMode.ANALYSIS}>Analysis</option>
             <option value={GameMode.STUPID_DEFENSIVE}>Mobbing</option>
+            <option value={GameMode.NICE_DEFENSIVE}>Nice defense</option>
             <option value={GameMode.JAVA_8x8}>Computer</option>
           </select>
         </div>
