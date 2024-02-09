@@ -48,7 +48,7 @@ public class HideShips extends DefensiveStrategy {
 
         long ship = Utils.getSunkShip(states[0], square, 8);
         this.hits &= ~ship;
-        this.hits |= ship;
+        this.sunk |= ship;
         return 2;
     }
 

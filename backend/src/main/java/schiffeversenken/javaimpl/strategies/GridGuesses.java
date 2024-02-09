@@ -7,8 +7,10 @@ import java.util.stream.IntStream;
 
 /**
  * This offensive strategy guesses squares in a grid.
- * Whenever it hits a ship, it will test the four surrounding squares until it finds the ship.
- * It can be determined whether it tries the grid in a random order or left to right.
+ * Whenever it hits a ship, it will test the four surrounding squares until it
+ * finds the ship.
+ * It can be determined whether it tries the grid in a random order or left to
+ * right.
  */
 public class GridGuesses extends OffensiveStrategy {
 
@@ -20,7 +22,8 @@ public class GridGuesses extends OffensiveStrategy {
     // the square we hit first when targeting == true
     private long hitSqaure;
 
-    // the direction we currently try encoded as offset: 1 for horizontal, 8 for vertical
+    // the direction we currently try encoded as offset: 1 for horizontal, 8 for
+    // vertical
     private int direction;
 
     private List<Long> grid;
@@ -32,9 +35,9 @@ public class GridGuesses extends OffensiveStrategy {
         this.direction = 0;
         this.grid = IntStream.range(0, 32)
                 .boxed()
-                .map(i -> 1L << (2*i))
+                .map(i -> 1L << (2 * i))
                 .collect(Collectors.toList());
-        if(rnd) {
+        if (rnd) {
             Collections.shuffle(grid);
         }
     }
@@ -42,7 +45,7 @@ public class GridGuesses extends OffensiveStrategy {
     @Override
     protected long computeNextMove() {
         // shoot grid pattern
-        if(!targeting) {
+        if (!targeting) {
             return getNextGridShot();
         }
 
@@ -53,12 +56,24 @@ public class GridGuesses extends OffensiveStrategy {
     @Override
     public void update(int state) {
         super.update(state);
+        switch (state) {
+            case 0:
+                // TODO handle
+            case 1:
+                // TODO handle
+                targeting = true;
+            case 2:
+                // TODO handle
+                targeting = false;
+            default:
+                throw new IllegalArgumentException("The state " + state + " is not valid.");
+        }
         // TODO this is supposed to do something different here
     }
 
     private long getNextGridShot() {
         long square = grid.remove(0);
-        while((square & (this.miss | this.hit | this.sunk)) != 0L) {
+        while ((square & (this.miss | this.hit | this.sunk)) != 0L) {
             square = grid.remove(0);
         }
         return square;
