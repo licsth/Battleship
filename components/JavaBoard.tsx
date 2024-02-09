@@ -51,6 +51,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   );
   const [defenseLayoutIsConfirmed, setDefenseLayoutIsConfirmed] =
     useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const [defensiveStrategy, setDefensiveStrategy] = useState(
     DefensiveStrategy.HideShips
@@ -76,17 +77,22 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     defensiveStrategy: DefensiveStrategy,
     offensiveStrategy: OffensiveStrategy
   ) {
-    // TODO make API call
     fetch("http://localhost:8080/api/start", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ defensiveStrategy, offensiveStrategy }),
-    }).then(async (response) => {
-      console.log(await response.text());
-      return;
-    });
+    })
+      .then(async (response) => {
+        setGameStarted(true);
+        console.log(await response.text());
+        return;
+      })
+      .catch((e) => {
+        console.error(e);
+        alert("Error fetching game start response.");
+      });
   }
 
   async function postGuess(square: number) {
@@ -97,9 +103,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(square),
-    });
+    }).finally(() => setIsLoading(false));
     const state = await res.text();
-    setIsLoading(false);
     return Number(state);
   }
 
@@ -135,8 +140,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ guess: move, state: returnState }),
-    });
-    setIsLoading(false);
+    }).finally(() => setIsLoading(false));
   }
 
   async function confirmGuess() {
@@ -162,7 +166,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
   }
 
   function placeShip(row: number, col: number) {
-    if (defenseLayoutIsConfirmed) return;
+    if (defenseLayoutIsConfirmed || !gameStarted) return;
     const newBoardState = [...defenseLayout];
     newBoardState[row][col] = {
       state:
@@ -214,108 +218,120 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   return (
     <div>
-      <div className="flex justify-center mb-8 mt-4 gap-x-5 items-center">
+      <div className="flex justify-center mb-8 mt-4 gap-x-6 items-center">
         <div>
           <label className="block text-[10px] mb-1 text-cyan-700">
             Defensive strategy
           </label>
-          <select
-            className="rounded text-xs px-1 py-2 shadow-sm"
-            onChange={(e) =>
-              setDefensiveStrategy(e.target.value as DefensiveStrategy)
-            }
-          >
-            {Object.values(DefensiveStrategy).map((strat) => (
-              <option key={strat} value={strat}>
-                {strat}
-              </option>
-            ))}
-          </select>
+          {gameStarted ? (
+            <p className="text-sm">{defensiveStrategy}</p>
+          ) : (
+            <select
+              className="rounded text-xs px-1 py-2 shadow-sm"
+              onChange={(e) =>
+                setDefensiveStrategy(e.target.value as DefensiveStrategy)
+              }
+            >
+              {Object.values(DefensiveStrategy).map((strat) => (
+                <option key={strat} value={strat}>
+                  {strat}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
         <div>
           <label className="block text-[10px] mb-1 text-cyan-700">
             Offensive strategy
           </label>
-          <select
-            className="rounded text-xs px-1 py-2 shadow-sm"
-            onChange={(e) =>
-              setOffensiveStrategy(e.target.value as OffensiveStrategy)
-            }
-          >
-            {Object.values(OffensiveStrategy).map((strat) => (
-              <option key={strat} value={strat}>
-                {strat}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <div
-            className="bg-cyan-500 hover:bg-cyan-600 text-white cursor-pointer w-min px-3 py-2 rounded"
-            onClick={() => startGame(defensiveStrategy, offensiveStrategy)}
-          >
-            Start
-          </div>
-        </div>
-      </div>
-      <div>
-        <div className="grid grid-cols-2 gap-x-12">
-          <div>
-            <BoardDisplay
-              boardState={
-                defenseLayoutIsConfirmed ? defenseState : defenseLayout
+          {gameStarted ? (
+            <p className="text-sm">{offensiveStrategy}</p>
+          ) : (
+            <select
+              className="rounded text-xs px-1 py-2 shadow-sm"
+              onChange={(e) =>
+                setOffensiveStrategy(e.target.value as OffensiveStrategy)
               }
-              getFieldBackgroundColor={(row, col) => {
-                if (
-                  defenseLayoutIsConfirmed &&
-                  defenseLayout[row][col].state === SquareState.SHIP_SUNK
-                ) {
-                  return "hsl(200, 60%, 80%)";
-                }
-              }}
-              onFieldClick={placeShip}
-              isLoading={isLoading}
-            />
-          </div>
-          <div>
-            <BoardDisplay
-              boardState={attackState}
-              onFieldClick={(row, col) => setCurrentGuess([row, col])}
-              isLoading={isLoading}
-              getFieldBackgroundColor={(row, col) => {
-                if (!currentGuess) return undefined;
-                if (row === currentGuess[0] && col === currentGuess[1])
-                  return "hsl(270, 60%, 80%)";
-              }}
-            />
-          </div>
+            >
+              {Object.values(OffensiveStrategy).map((strat) => (
+                <option key={strat} value={strat}>
+                  {strat}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
-        {!defenseLayoutIsConfirmed ? (
-          <div className="flex justify-center my-4">
-            <button
-              onClick={checkDefenseLayout}
-              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+        {!gameStarted && (
+          <div>
+            <div
+              className="bg-cyan-500 hover:bg-cyan-600 text-white cursor-pointer w-min px-3 py-2 rounded"
+              onClick={() => startGame(defensiveStrategy, offensiveStrategy)}
             >
-              Confirm Layout
-            </button>
-          </div>
-        ) : (
-          <div className="flex justify-center my-4">
-            <button
-              onClick={confirmGuess}
-              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
-            >
-              Guess
-            </button>
+              Start
+            </div>
           </div>
         )}
-        <div className="flex items-center justify-center">
-          <JavaShipDisplay
-            ships={ships}
-            unsunkenShipIndices={unsunkenShipIndices}
-          />
-        </div>
       </div>
+      {gameStarted && (
+        <div>
+          <div className="grid grid-cols-2 gap-x-12">
+            <div>
+              <BoardDisplay
+                boardState={
+                  defenseLayoutIsConfirmed ? defenseState : defenseLayout
+                }
+                getFieldBackgroundColor={(row, col) => {
+                  if (
+                    defenseLayoutIsConfirmed &&
+                    defenseLayout[row][col].state === SquareState.SHIP_SUNK
+                  ) {
+                    return "hsl(200, 60%, 80%)";
+                  }
+                }}
+                onFieldClick={placeShip}
+                isLoading={isLoading}
+              />
+            </div>
+            <div>
+              <BoardDisplay
+                boardState={attackState}
+                onFieldClick={(row, col) => setCurrentGuess([row, col])}
+                isLoading={isLoading}
+                getFieldBackgroundColor={(row, col) => {
+                  if (!currentGuess) return undefined;
+                  if (row === currentGuess[0] && col === currentGuess[1])
+                    return "hsl(270, 60%, 80%)";
+                }}
+              />
+            </div>
+          </div>
+          {!defenseLayoutIsConfirmed ? (
+            <div className="flex justify-center my-4">
+              <button
+                onClick={checkDefenseLayout}
+                className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+              >
+                Confirm Layout
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-center my-4">
+              <button
+                onClick={confirmGuess}
+                className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+              >
+                Guess
+              </button>
+            </div>
+          )}
+          <div className="flex items-center justify-center">
+            <JavaShipDisplay
+              ships={ships}
+              unsunkenShipIndices={unsunkenShipIndices}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
