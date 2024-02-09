@@ -315,25 +315,43 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
               />
             </div>
           </div>
-          {!defenseLayoutIsConfirmed ? (
-            <div className="flex justify-center my-4">
+          <div className="flex justify-center my-4">
+            {!defenseLayoutIsConfirmed ? (
               <button
                 onClick={checkDefenseLayout}
                 className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
               >
                 Confirm Layout
               </button>
-            </div>
-          ) : (
-            <div className="flex justify-center my-4">
+            ) : (
               <button
                 onClick={confirmGuess}
                 className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
               >
                 Guess
               </button>
-            </div>
-          )}
+            )}
+            {/* <button
+              onClick={() => {
+                const ok = confirm("Are you sure you want to reset the game?");
+                if (!ok) return;
+                setDefenseLayout(
+                  newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+                );
+                setDefenseState(
+                  newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+                );
+                setAttackState(
+                  newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+                );
+                setDefenseLayoutIsConfirmed(false);
+                setGameStarted(false);
+              }}
+              className="ml-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 text-xs w-32 shadow-sm"
+            >
+              Reset game
+            </button> */}
+          </div>
           <div className="flex items-center justify-center">
             <JavaShipDisplay
               ships={ships}
