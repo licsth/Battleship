@@ -13,7 +13,7 @@ public class Main {
 
         Gamestates gs = new Gamestates(true);
         try (DataOutputStream ds = new DataOutputStream(
-                new BufferedOutputStream(new FileOutputStream("gamestates.bin")))) {
+                new BufferedOutputStream(new FileOutputStream(Game.GAME_STATES_FILENAME)))) {
             for (long l : gs.gameStates) {
                 ds.writeLong(l);
             }
