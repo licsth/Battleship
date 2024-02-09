@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:3000")
 public class HTMLInterface {
 
+    private int count = 0;
+
     @PostMapping("/api/start")
     public void start(@RequestBody StrategiesDto strategies) {
       // TODO start precomputations & set up strategies
@@ -31,15 +33,9 @@ public class HTMLInterface {
     }
 
     @GetMapping("/api/nextMove")
-    public long getNextMove() {
-      // wait 3 seconds
-      try {
-        Thread.sleep(3000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+    public int getNextMove() {
       System.out.println("Received request for next move");
       // TODO: return next move
-      return 1L;
+      return count++ % 64;
     }
 }

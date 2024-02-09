@@ -126,6 +126,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         row
       );
       if (shapesEqualWithoutRotation(hitShip, fullShip)) {
+        sinkShip(defenseState, row, col);
         returnState = 2;
       } else {
         returnState = 1;
@@ -284,7 +285,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
                 getFieldBackgroundColor={(row, col) => {
                   if (
                     defenseLayoutIsConfirmed &&
-                    defenseLayout[row][col].state === SquareState.SHIP_SUNK
+                    defenseLayout[row][col].state === SquareState.SHIP_SUNK &&
+                    defenseState[row][col].state !== SquareState.SHIP_SUNK
                   ) {
                     return "hsl(200, 60%, 80%)";
                   }
