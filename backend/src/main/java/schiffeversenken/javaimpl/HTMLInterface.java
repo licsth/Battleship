@@ -6,13 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import schiffeversenken.javaimpl.strategies.GridGuesses;
-import schiffeversenken.javaimpl.strategies.HideShips;
-import schiffeversenken.javaimpl.strategies.RandomPlacement;
-import schiffeversenken.javaimpl.strategies.RandomGuesses;
+import schiffeversenken.javaimpl.strategies.*;
 import schiffeversenken.javaimpl.players.Player;
-import schiffeversenken.javaimpl.strategies.DefensiveStrategy;
-import schiffeversenken.javaimpl.strategies.OffensiveStrategy;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")

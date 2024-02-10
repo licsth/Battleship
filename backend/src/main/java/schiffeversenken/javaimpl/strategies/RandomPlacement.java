@@ -25,7 +25,7 @@ public class RandomPlacement extends FairDefense {
     public RandomPlacement() throws FileNotFoundException, IOException {
         super();
         Random rnd = ThreadLocalRandom.current();
-        int pos = rnd.nextInt(Gamestates.STATES_IN_STANDARD_8x8);
+        long pos = rnd.nextLong(Gamestates.STATES_IN_STANDARD_8x8);
         RandomAccessFile raf = new RandomAccessFile(Game.GAME_STATES_FILENAME, "r");
         raf.seek(pos * Long.BYTES);
         this.ships = raf.readLong();

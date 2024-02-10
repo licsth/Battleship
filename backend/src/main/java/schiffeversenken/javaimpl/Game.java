@@ -8,7 +8,7 @@ import schiffeversenken.javaimpl.strategies.*;
 
 public class Game {
 
-    public static final String GAME_STATES_FILENAME = "gamestates.bin";
+    public static final String GAME_STATES_FILENAME = "/Users/MacAirM2/IdeaProjects/Battleship/gamestates.bin";
 
     Player human;
     Player computer;

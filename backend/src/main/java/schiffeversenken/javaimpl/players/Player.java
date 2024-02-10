@@ -20,11 +20,12 @@ public class Player {
     public Player(OffensiveStrategy offensiveStrategy, DefensiveStrategy defensiveStrategy) {
         this.offensiveStrategy = offensiveStrategy;
         this.defensiveStrategy = defensiveStrategy;
-        offensiveStrategy.start();
+        offensiveStrategy.computeNextMove();
     }
 
     /**
      * This method is used to notify this player of the result of their last move.
+     * 
      * @param state the state of the square (miss (0), hit (1), or sunk (2))
      */
     public void notify(int state) {
@@ -34,6 +35,7 @@ public class Player {
     /**
      * This method is used to tell this Player which square the opponent shot at.
      * It returns whether the shot was a miss (0), hit (1) or sunk (2)
+     * 
      * @param square the square that was shot
      * @return the state
      */
@@ -44,10 +46,11 @@ public class Player {
     /**
      * This method returns the next move this player wants to make.
      * When the player has not yet chosen, it waits until they do.
+     * 
      * @return the next move this player would like to make.
      */
     public long getNextMove() {
-        while(offensiveStrategy.nextMove == 0L) {}
+        offensiveStrategy.computeNextMove();
         return offensiveStrategy.nextMove;
     }
 
@@ -55,7 +58,4 @@ public class Player {
         return defensiveStrategy.hasLost();
     }
 
-    public void gameOver() {
-        this.offensiveStrategy.setGameOver();
-    }
 }

@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 public class RandomGuesses extends OffensiveStrategy {
 
     private final List<Long> guesses;
+
     public RandomGuesses() {
         guesses = IntStream.range(0, 64)
                 .boxed()
@@ -20,11 +21,11 @@ public class RandomGuesses extends OffensiveStrategy {
     }
 
     @Override
-    protected long computeNextMove() {
+    public void computeNextMove() {
         long guess = guesses.remove(0);
-        while((guess & (miss | hit | sunk)) != 0) {
+        while ((guess & (miss | hit | sunk)) != 0) {
             guess = guesses.remove(0);
         }
-        return guess;
+        this.nextMove = guess;
     }
 }

@@ -43,14 +43,14 @@ public class GridGuesses extends OffensiveStrategy {
     }
 
     @Override
-    protected long computeNextMove() {
+    public void computeNextMove() {
         // shoot grid pattern
         if (!targeting) {
-            return getNextGridShot();
+            this.nextMove = getNextGridShot();
         }
 
         // TODO implement
-        return 0;
+
     }
 
     @Override
