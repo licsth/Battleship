@@ -20,7 +20,7 @@ public class GridGuesses extends OffensiveStrategy {
     private boolean targeting;
 
     // the square we hit first when targeting == true
-    private long hitSqaure;
+    private long hitSquare;
 
     // the direction we currently try encoded as offset: 1 for horizontal, 8 for
     // vertical
@@ -31,12 +31,10 @@ public class GridGuesses extends OffensiveStrategy {
     public GridGuesses(boolean rnd) {
         this.rnd = rnd;
         this.targeting = false;
-        this.hitSqaure = 0L;
+        this.hitSquare = 0L;
         this.direction = 0;
-        this.grid = IntStream.range(0, 32)
-                .boxed()
-                .map(i -> 1L << (2 * i))
-                .collect(Collectors.toList());
+        // initiate grid to 0,2,4,6, 9,11,13,15, 16,18,20,22, 25,27,29,31, 32,34,36,38, 41,43,45,47, 48,50,52,54, 57,59,61,63
+        this.grid = IntStream.range(0,64).filter(i -> (i/8)%2==0 ? i % 2 == 0 : i % 2 == 1).boxed().map(i -> 1L << i).collect(Collectors.toList());
         if (rnd) {
             Collections.shuffle(grid);
         }
@@ -59,12 +57,15 @@ public class GridGuesses extends OffensiveStrategy {
         switch (state) {
             case 0:
                 // TODO handle
+                break;
             case 1:
                 // TODO handle
                 targeting = true;
+                break;
             case 2:
                 // TODO handle
                 targeting = false;
+                break;
             default:
                 throw new IllegalArgumentException("The state " + state + " is not valid.");
         }

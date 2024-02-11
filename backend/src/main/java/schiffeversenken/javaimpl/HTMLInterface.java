@@ -103,7 +103,6 @@ public class HTMLInterface {
     if (computerPlayer == null) {
       throw new IllegalStateException("Offensive strategy not set up");
     }
-    // TODO check if it's enough to pass in the state, not the guess
     computerPlayer.notify(guessResponse.state);
   }
 
