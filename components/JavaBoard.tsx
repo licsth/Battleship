@@ -10,9 +10,9 @@ import {
   findSunkenShip,
 } from '../utilities/findSunkenShip';
 import { shapesEqualWithoutRotation } from '../utilities/shipShapesEqual';
+import { classNames } from '../utilities/classNames';
 import { JavaShipDisplay } from './JavaShipDisplay';
 import { BoardDisplay } from './BoardDisplay';
-import { classNames } from '../utilities/classNames';
 
 interface Props {}
 
@@ -219,6 +219,20 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     setDefenseLayoutIsConfirmed(true);
   }
 
+  async function chooseRandomConfig() {
+    const res = await fetch('http://localhost:8080/api/randomConfig');
+    const config: (0 | 1)[][] = await res.json();
+    console.log(config);
+    setDefenseLayout(
+      config.map((row) =>
+        row.map((col) => ({
+          state: col ? SquareState.SHIP_SUNK : SquareState.UNKNOWN,
+        })),
+      ),
+    );
+    setDefenseLayoutIsConfirmed(true);
+  }
+
   return (
     <div>
       <div className="flex justify-center mb-8 mt-4 gap-x-6 items-center">
@@ -327,12 +341,20 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
           </div>
           <div className="flex justify-center my-4">
             {!defenseLayoutIsConfirmed ? (
-              <button
-                onClick={checkDefenseLayout}
-                className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
-              >
-                Confirm Layout
-              </button>
+              <>
+                <button
+                  onClick={chooseRandomConfig}
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 text-xs w-32 shadow-sm mr-5"
+                >
+                  Choose random layout
+                </button>
+                <button
+                  onClick={checkDefenseLayout}
+                  className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+                >
+                  Confirm Layout
+                </button>
+              </>
             ) : (
               <button
                 onClick={confirmGuess}

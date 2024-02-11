@@ -81,8 +81,6 @@ public class HTMLInterface {
           states[i] = ds.readLong();
         }
       } catch (Exception e) {
-        // print exception
-        System.out.println(e);
         System.out.println("Error reading states");
       }
       return states;
@@ -117,5 +115,17 @@ public class HTMLInterface {
     }
     // return index of the first 1 in the bit representation of nextMoveSquare
     return Long.numberOfLeadingZeros(computerPlayer.getNextMove());
+  }
+
+  @GetMapping("/api/randomConfig")
+  public int[][] getRandomState() {
+    int index = (int) (Math.random() * Gamestates.STATES_IN_STANDARD_8x8);
+    System.out.println("Returning random state at index " + index);
+    try {
+      long state = Utils.readLongAtBit(Game.GAME_STATES_FILENAME, index*8);
+      return Utils.longTo2DArray(state);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

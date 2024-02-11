@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Random;
+import java.io.RandomAccessFile;
+import java.io.IOException;
 
 public class Utils {
 
@@ -167,6 +169,33 @@ public class Utils {
             throw new RuntimeException("Something went wrong when reading the states.");
         }
         return states;
+    }
+
+    public static int[][] longTo2DArray(long l) {
+        int[][] result = new int[8][8];
+        for (int i = 0; i < 64; i++) {
+            result[i / 8][i % 8] = (int) ((l >> i) & 1);
+        }
+        return result;
+    }
+
+    public static long readLongAtBit(String filePath, int byteOffset) throws IOException {
+        try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
+            // Move to the byte position where the starting bit resides
+            file.seek(byteOffset);
+
+            // Read 8 bytes from the file
+            byte[] buffer = new byte[8];
+            file.readFully(buffer);
+
+            // Extract bits from the bytes and combine them into a long
+            long result = 0;
+            for (int i = 0; i < 8; i++) {
+                result |= ((long) (buffer[i] & 0xFF)) << ((7 - i) * 8);
+            }
+
+            return result;
+        }
     }
 
 }
