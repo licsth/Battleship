@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
-import { ShipShape } from "../utilities/ship";
-import { classNames } from "../utilities/classNames";
+import { FunctionComponent } from 'react';
+import { ShipShape } from '../utilities/ship';
+import { classNames } from '../utilities/classNames';
 
 interface Props {
   ships: ShipShape[];
@@ -12,7 +12,7 @@ export const JavaShipDisplay: FunctionComponent<Props> = ({
   unsunkenShipIndices,
 }) => {
   return (
-    <div className="" style={{ display: "flex", flexDirection: "row" }}>
+    <div className="" style={{ display: 'flex', flexDirection: 'row' }}>
       <p className="mb-6 mt-4 mr-10 text-slate-600 text-xl">Ships:</p>
       {ships.map((ship, shipIndex) => (
         <div className="mr-5 flex items-center gap-7" key={`ship-${shipIndex}`}>
@@ -23,12 +23,12 @@ export const JavaShipDisplay: FunctionComponent<Props> = ({
                   <div
                     key={`row-${i}-col-${j}`}
                     className={classNames(
-                      "rounded inline-flex items-center mr-[3px] text-center justify-center align-middle",
+                      'rounded inline-flex items-center mr-[3px] text-center justify-center align-middle',
                       col &&
                         (unsunkenShipIndices.includes(shipIndex)
-                          ? "bg-purple-400"
-                          : "bg-slate-600"),
-                      "w-6 h-6 select-none"
+                          ? 'bg-purple-400'
+                          : 'bg-slate-600'),
+                      'w-6 h-6 select-none',
                     )}
                   ></div>
                 );

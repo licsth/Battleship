@@ -1,50 +1,34 @@
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
-import React from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { ShipShape } from "../utilities/ship";
-import { range } from "lodash";
-import { newGrid } from "../utilities/array";
-import { BoardSizeInputSection } from "./BoardSizeInputSection";
-import { HeatMapLegend } from "./HeatMapLegend";
-import { ShipDisplay } from "./ShipDisplay";
-import { JavaShipDisplay } from "./JavaShipDisplay";
-import { shipShapesEqual } from "../utilities/shipShapesEqual";
-import { findSunkenShip } from "../utilities/findSunkenShip";
-import { AnalysisBoard } from "./AnalysisBoard";
-import { StupidDefenseBoard } from "./StupidDefenseBoard";
-import { trimShip } from "../utilities/trimShip";
-import { classNames } from "../utilities/classNames";
-import { JavaBoard } from "./JavaBoard";
-import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
-import { NiceBoard } from "./NiceBoard";
+import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { Board, SquareState } from '../utilities/boardState';
+import { ShipShape } from '../utilities/ship';
+import { newGrid } from '../utilities/array';
+import { classNames } from '../utilities/classNames';
+import { getUnsunkenShipIndicesInBoardState } from '../utilities/getUnsunkShipIndicesInBoardState';
+import { BoardSizeInputSection } from './BoardSizeInputSection';
+import { HeatMapLegend } from './HeatMapLegend';
+import { ShipDisplay } from './ShipDisplay';
+import { AnalysisBoard } from './AnalysisBoard';
+import { StupidDefenseBoard } from './StupidDefenseBoard';
+import { JavaBoard } from './JavaBoard';
+import { NiceBoard } from './NiceBoard';
 
 export enum GameMode {
-  ANALYSIS = "analysis",
-  STUPID_DEFENSIVE = "stupid_defensive",
-  NICE_DEFENSIVE = "nice_defensive",
-  JAVA_8x8 = "java_8x8",
+  ANALYSIS = 'analysis',
+  STUPID_DEFENSIVE = 'stupid_defensive',
+  NICE_DEFENSIVE = 'nice_defensive',
+  JAVA_8x8 = 'java_8x8',
 }
 
 export const Gameboard: FunctionComponent = ({}) => {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [computationTime, setComputationTime] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.ANALYSIS);
   const [boardSize, setBoardSize] = useState<number>(5);
 
   const [boardState, setBoardState] = useState<Board>(
-    newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN }))
+    newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN })),
   );
-
-  const standardShips = [
-    [[true, true]],
-    [[true, true]],
-    [[true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true]],
-    [[true, true, true, true]],
-  ];
 
   const [ships, setShips] = useState<ShipShape[]>([
     [[true, true]],
@@ -54,15 +38,15 @@ export const Gameboard: FunctionComponent = ({}) => {
 
   const unsunkenShipIndices = useMemo(
     () => getUnsunkenShipIndicesInBoardState(boardState, ships),
-    [ships, boardState]
+    [ships, boardState],
   );
 
   const unsunkenShips = useMemo(() => {
     return ships.filter((_, index) => unsunkenShipIndices.includes(index));
-  }, [unsunkenShipIndices]);
+  }, [unsunkenShipIndices, ships]);
 
   const [possibleConfigs, setPossibleConfigs] = useState<number[][] | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -71,18 +55,18 @@ export const Gameboard: FunctionComponent = ({}) => {
     setBoardState(
       newGrid(newBoardSize, newBoardSize, () => ({
         state: SquareState.UNKNOWN,
-      }))
+      })),
     );
   }, [gameMode]);
 
   return (
     <div
       className={classNames(
-        "grid bg-slate-100 font-mono",
-        gameMode === GameMode.ANALYSIS && "grid-cols-3",
-        gameMode === GameMode.STUPID_DEFENSIVE && "grid-cols-2",
-        gameMode === GameMode.NICE_DEFENSIVE && "grid-cols-2",
-        gameMode === GameMode.JAVA_8x8 && "grid-cols-1"
+        'grid bg-slate-100 font-mono',
+        gameMode === GameMode.ANALYSIS && 'grid-cols-3',
+        gameMode === GameMode.STUPID_DEFENSIVE && 'grid-cols-2',
+        gameMode === GameMode.NICE_DEFENSIVE && 'grid-cols-2',
+        gameMode === GameMode.JAVA_8x8 && 'grid-cols-1',
       )}
     >
       {gameMode === GameMode.ANALYSIS && (
@@ -98,7 +82,7 @@ export const Gameboard: FunctionComponent = ({}) => {
             setBoardState(
               newGrid(newBoardSize, newBoardSize, () => ({
                 state: SquareState.UNKNOWN,
-              }))
+              })),
             );
             setPossibleConfigs(null);
           }}
@@ -141,7 +125,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                 setBoardState(
                   newGrid(boardSize, boardSize, () => ({
                     state: SquareState.UNKNOWN,
-                  }))
+                  })),
                 );
                 setPossibleConfigs(null);
               }}

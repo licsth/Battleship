@@ -1,14 +1,14 @@
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { BoardDisplay } from "./BoardDisplay";
+import { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { Board, SquareState } from '../utilities/boardState';
 import {
   ShipShapeVariant,
   possibleConfigurations,
-} from "../utilities/bestGuess";
-import { ShipShape } from "../utilities/ship";
-import { shapesEqualWithoutRotation } from "../utilities/shipShapesEqual";
-import { rotateShip } from "../utilities/rotateShip";
-import { copySunkShips } from "../utilities/copySunkShips";
+} from '../utilities/bestGuess';
+import { ShipShape } from '../utilities/ship';
+import { shapesEqualWithoutRotation } from '../utilities/shipShapesEqual';
+import { rotateShip } from '../utilities/rotateShip';
+import { copySunkShips } from '../utilities/copySunkShips';
+import { BoardDisplay } from './BoardDisplay';
 
 interface Props {
   boardState: Board;
@@ -21,13 +21,13 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
   setBoardState,
   unsunkenShips,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [guessCount, setGuessCount] = useState(0);
 
   useEffect(() => {
     if (
       boardState.every((row) =>
-        row.every((square) => square.state === SquareState.UNKNOWN)
+        row.every((square) => square.state === SquareState.UNKNOWN),
       )
     ) {
       // reset count on board reset
@@ -58,7 +58,7 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
       newState,
       [...unsunkenShipVariants],
       [],
-      true
+      true,
     );
     if (possibleConfig.some((row) => row.some((col) => col !== 0))) {
       setBoardState(newState);
@@ -68,7 +68,7 @@ export const StupidDefenseBoard: FunctionComponent<Props> = ({
         newState,
         [...unsunkenShipVariants],
         [],
-        true
+        true,
       );
       newState[row][col].state = SquareState.SHIP_HIT;
       copySunkShips(newState, possibleConfig);

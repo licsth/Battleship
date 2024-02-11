@@ -1,19 +1,19 @@
-import { FunctionComponent, useMemo, useState } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { BoardDisplay } from "./BoardDisplay";
+import { FunctionComponent, useMemo } from 'react';
+import { Board, SquareState } from '../utilities/boardState';
 import {
   ShipShapeVariant,
   possibleConfigurations,
-} from "../utilities/bestGuess";
-import { ShipShape } from "../utilities/ship";
+} from '../utilities/bestGuess';
+import { ShipShape } from '../utilities/ship';
 import {
   shapesEqualWithoutRotation,
   shipShapesEqual,
-} from "../utilities/shipShapesEqual";
-import { rotateShip } from "../utilities/rotateShip";
-import { sinkShip } from "../utilities/sinkShip";
-import { trimShip } from "../utilities/trimShip";
-import { copyBoardState } from "../utilities/findSunkenShip";
+} from '../utilities/shipShapesEqual';
+import { rotateShip } from '../utilities/rotateShip';
+import { sinkShip } from '../utilities/sinkShip';
+import { trimShip } from '../utilities/trimShip';
+import { copyBoardState } from '../utilities/findSunkenShip';
+import { BoardDisplay } from './BoardDisplay';
 
 interface Props {
   boardState: Board;
@@ -46,16 +46,16 @@ export const NiceBoard: FunctionComponent<Props> = ({
     sunkState[row][col].state = SquareState.SHIP_HIT;
     // check if it's possible to sink the ship
     const sunkShip = trimShip(sinkShip(sunkState, row, col));
-    let sunkShipIndex = sunkShip
+    const sunkShipIndex = sunkShip
       ? unsunkenShips.findIndex((ship) => shipShapesEqual(ship, sunkShip))
       : -1;
     if (sunkShip && sunkShipIndex !== -1) {
       console.log(sunkShipIndex);
-      let possibleConfig = possibleConfigurations(
+      const possibleConfig = possibleConfigurations(
         sunkState,
         [...unsunkenShipVariants.filter((_, index) => index !== sunkShipIndex)],
         [],
-        true
+        true,
       );
       if (possibleConfig.some((row) => row.some((col) => col !== 0))) {
         setBoardState(sunkState);
@@ -65,11 +65,11 @@ export const NiceBoard: FunctionComponent<Props> = ({
     // try hitting next
     const hitState = copyBoardState(boardState);
     hitState[row][col].state = SquareState.SHIP_HIT;
-    let possibleConfig = possibleConfigurations(
+    const possibleConfig = possibleConfigurations(
       hitState,
       [...unsunkenShipVariants],
       [],
-      true
+      true,
     );
     if (possibleConfig.some((row) => row.some((col) => col !== 0))) {
       setBoardState(hitState);

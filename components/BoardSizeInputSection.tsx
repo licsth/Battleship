@@ -1,6 +1,6 @@
-import { FunctionComponent, useMemo } from "react";
-import { Toggle } from "./Toggle";
-import { GameMode } from "./Gameboard";
+import { FunctionComponent } from 'react';
+import { Toggle } from './Toggle';
+import { GameMode } from './Gameboard';
 
 interface Props {
   boardSize: number;

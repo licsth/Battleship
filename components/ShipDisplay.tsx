@@ -1,7 +1,7 @@
-import { FunctionComponent } from "react";
-import { ShipShape } from "../utilities/ship";
-import { classNames } from "../utilities/classNames";
-import { addSquareToShip } from "../utilities/addSquareToShip";
+import { FunctionComponent } from 'react';
+import { ShipShape } from '../utilities/ship';
+import { classNames } from '../utilities/classNames';
+import { addSquareToShip } from '../utilities/addSquareToShip';
 
 interface Props {
   ships: ShipShape[];
@@ -50,16 +50,16 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                     <div
                       key={`row-${i}-col-${j}`}
                       className={classNames(
-                        "rounded inline-flex items-center mr-[3px] text-center justify-center align-middle",
+                        'rounded inline-flex items-center mr-[3px] text-center justify-center align-middle',
                         col &&
                           (unsunkenShipIndices.includes(shipIndex)
-                            ? "bg-purple-400"
-                            : "bg-slate-600"),
+                            ? 'bg-purple-400'
+                            : 'bg-slate-600'),
                         canAddHorizontal &&
-                          "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
+                          'bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer',
                         canAddVertical &&
-                          "bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer",
-                        "w-6 h-6 select-none"
+                          'bg-slate-200 text-slate-500 hover:bg-slate-300 cursor-pointer',
+                        'w-6 h-6 select-none',
                       )}
                       onClick={() => {
                         if (canAddHorizontal || canAddVertical) {
@@ -67,7 +67,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                         }
                       }}
                     >
-                      {(canAddHorizontal || canAddVertical) && "+"}
+                      {(canAddHorizontal || canAddVertical) && '+'}
                     </div>
                   );
                 })}

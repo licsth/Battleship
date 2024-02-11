@@ -1,31 +1,28 @@
-import { FunctionComponent, useMemo, useState } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { BoardDisplay } from "./BoardDisplay";
-import { newGrid } from "../utilities/array";
-import { JavaShipDisplay } from "./JavaShipDisplay";
-import { getUnsunkenShipIndicesInBoardState } from "../utilities/getUnsunkShipIndicesInBoardState";
-import { sinkShip } from "../utilities/sinkShip";
-import { set, sum } from "lodash";
+import { FunctionComponent, useMemo, useState } from 'react';
+import { sum } from 'lodash';
+import { Board, SquareState } from '../utilities/boardState';
+import { newGrid } from '../utilities/array';
+import { getUnsunkenShipIndicesInBoardState } from '../utilities/getUnsunkShipIndicesInBoardState';
+import { sinkShip } from '../utilities/sinkShip';
 import {
   copyBoardState,
   findHitShip,
   findSunkenShip,
-} from "../utilities/findSunkenShip";
-import {
-  shapesEqualWithoutRotation,
-  shipShapesEqual,
-} from "../utilities/shipShapesEqual";
+} from '../utilities/findSunkenShip';
+import { shapesEqualWithoutRotation } from '../utilities/shipShapesEqual';
+import { JavaShipDisplay } from './JavaShipDisplay';
+import { BoardDisplay } from './BoardDisplay';
 
 interface Props {}
 
 enum DefensiveStrategy {
-  HideShips = "HideShips",
-  RandomPlacement = "RandomPlacement",
+  HideShips = 'HideShips',
+  RandomPlacement = 'RandomPlacement',
 }
 
 enum OffensiveStrategy {
-  GridGuesses = "GridGuesses",
-  RandomGuesses = "RandomGuesses",
+  GridGuesses = 'GridGuesses',
+  RandomGuesses = 'RandomGuesses',
 }
 
 const ships = [
@@ -40,27 +37,27 @@ const ships = [
 
 export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [attackState, setAttackState] = useState<Board>(
-    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN })),
   );
 
   const [defenseLayout, setDefenseLayout] = useState<Board>(
-    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN })),
   );
   const [defenseState, setDefenseState] = useState<Board>(
-    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN }))
+    newGrid(8, 8, () => ({ state: SquareState.UNKNOWN })),
   );
   const [defenseLayoutIsConfirmed, setDefenseLayoutIsConfirmed] =
     useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
   const [defensiveStrategy, setDefensiveStrategy] = useState(
-    DefensiveStrategy.HideShips
+    DefensiveStrategy.HideShips,
   );
   const [offensiveStrategy, setOffensiveStrategy] = useState(
-    OffensiveStrategy.GridGuesses
+    OffensiveStrategy.GridGuesses,
   );
   const [currentGuess, setCurrentGuess] = useState<[number, number] | null>(
-    null
+    null,
   );
 
   const unsunkenShipIndices = useMemo(
@@ -68,7 +65,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       defenseLayoutIsConfirmed
         ? getUnsunkenShipIndicesInBoardState(attackState, ships)
         : getUnsunkenShipIndicesInBoardState(defenseLayout, ships),
-    [ships, attackState, defenseLayout, defenseLayoutIsConfirmed]
+    [attackState, defenseLayout, defenseLayoutIsConfirmed],
   );
 
   const [defenseIsLoading, setDefenseIsLoading] = useState(false);
@@ -76,12 +73,12 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   function startGame(
     defensiveStrategy: DefensiveStrategy,
-    offensiveStrategy: OffensiveStrategy
+    offensiveStrategy: OffensiveStrategy,
   ) {
-    fetch("http://localhost:8080/api/start", {
-      method: "POST",
+    fetch('http://localhost:8080/api/start', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ defensiveStrategy, offensiveStrategy }),
     })
@@ -92,16 +89,16 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       })
       .catch((e) => {
         console.error(e);
-        alert("Error fetching game start response.");
+        alert('Error fetching game start response.');
       });
   }
 
   async function postGuess(square: number) {
     setOffenseIsLoading(true);
-    const res = await fetch("http://localhost:8080/api/guess", {
-      method: "POST",
+    const res = await fetch('http://localhost:8080/api/guess', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(square),
     }).finally(() => setOffenseIsLoading(false));
@@ -111,11 +108,11 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   async function requestNextMove() {
     setDefenseIsLoading(true);
-    const res = await fetch("http://localhost:8080/api/nextMove");
+    const res = await fetch('http://localhost:8080/api/nextMove');
     const move = Number(await res.text());
     const row = Math.floor(move / 8);
     const col = move % 8;
-    console.log("Computer move:", move, `(${row}, ${col})`);
+    console.log('Computer move:', move, `(${row}, ${col})`);
     let returnState = 0;
     if (defenseLayout[row][col].state === SquareState.SHIP_SUNK) {
       defenseState[row][col] = { state: SquareState.SHIP_HIT };
@@ -123,7 +120,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       const fullShip: boolean[][] = findSunkenShip(
         copyBoardState(defenseLayout),
         col,
-        row
+        row,
       );
       if (shapesEqualWithoutRotation(hitShip, fullShip)) {
         sinkShip(defenseState, row, col);
@@ -134,12 +131,12 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     } else {
       defenseState[row][col] = { state: SquareState.MISSED };
     }
-    console.log("Returning state", returnState);
+    console.log('Returning state', returnState);
     setDefenseState([...defenseState]);
-    await fetch("http://localhost:8080/api/respondToGuess", {
-      method: "POST",
+    await fetch('http://localhost:8080/api/respondToGuess', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ guess: move, state: returnState }),
     }).finally(() => setDefenseIsLoading(false));
@@ -164,7 +161,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     }
     setCurrentGuess(null);
     setAttackState(newBoardState);
-    requestNextMove();
+    void requestNextMove();
   }
 
   function placeShip(row: number, col: number) {
@@ -184,20 +181,20 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
     // all ships are sunk
     const unsunkIndices = getUnsunkenShipIndicesInBoardState(
       defenseLayout,
-      ships
+      ships,
     );
     if (unsunkIndices.length !== 0) {
-      alert("Invalid layout: not all ships are sunk.");
+      alert('Invalid layout: not all ships are sunk.');
       return;
     }
     // no more sunk ships than expected
     const sunkSquareNumber = sum(
       defenseLayout.flatMap((row) =>
-        row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0))
-      )
+        row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0)),
+      ),
     );
     if (sunkSquareNumber !== 19) {
-      alert("Invalid layout: too many sunk ships");
+      alert('Invalid layout: too many sunk ships');
       return;
     }
     // ships are not adjacent
@@ -209,7 +206,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
               SquareState.SHIP_SUNK ||
             defenseLayout[row + 1]?.[col + 1]?.state === SquareState.SHIP_SUNK
           ) {
-            alert("Invalid layout: ships are adjacent.");
+            alert('Invalid layout: ships are adjacent.');
             return;
           }
         }
@@ -288,7 +285,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
                     defenseLayout[row][col].state === SquareState.SHIP_SUNK &&
                     defenseState[row][col].state !== SquareState.SHIP_SUNK
                   ) {
-                    return "hsl(200, 60%, 80%)";
+                    return 'hsl(200, 60%, 80%)';
                   }
                 }}
                 disableLoadingAnimation={(row, col) => {
@@ -311,8 +308,9 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
                 isLoading={offenseIsLoading}
                 getFieldBackgroundColor={(row, col) => {
                   if (!currentGuess) return undefined;
-                  if (row === currentGuess[0] && col === currentGuess[1])
-                    return "hsl(270, 60%, 80%)";
+                  if (row === currentGuess[0] && col === currentGuess[1]) {
+                    return 'hsl(270, 60%, 80%)';
+                  }
                 }}
               />
             </div>

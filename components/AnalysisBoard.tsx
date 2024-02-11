@@ -1,11 +1,11 @@
-import { FunctionComponent, useMemo } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { nextSquareState } from "../utilities/nextSquareState";
-import { rotateShip } from "../utilities/rotateShip";
-import { ShipShape } from "../utilities/ship";
-import { possibleConfigurations } from "../utilities/bestGuess";
-import { shapesEqualWithoutRotation } from "../utilities/shipShapesEqual";
-import { BoardDisplay } from "./BoardDisplay";
+import { FunctionComponent, useMemo } from 'react';
+import { Board, SquareState } from '../utilities/boardState';
+import { nextSquareState } from '../utilities/nextSquareState';
+import { rotateShip } from '../utilities/rotateShip';
+import { ShipShape } from '../utilities/ship';
+import { possibleConfigurations } from '../utilities/bestGuess';
+import { shapesEqualWithoutRotation } from '../utilities/shipShapesEqual';
+import { BoardDisplay } from './BoardDisplay';
 
 interface Props {
   showFullOutput: boolean;
@@ -44,8 +44,8 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
         }),
         [],
         false,
-        true
-      )
+        true,
+      ),
     );
     setComputationTime(Date.now() - time);
   }
@@ -56,11 +56,12 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
       ...possibleConfigs.map((row, i) =>
         Math.max(
           ...row.map((col, j) =>
-            boardState[i][j].state === SquareState.UNKNOWN ? col : 0
-          )
-        )
-      )
+            boardState[i][j].state === SquareState.UNKNOWN ? col : 0,
+          ),
+        ),
+      ),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [possibleConfigs]);
 
   return (
@@ -72,7 +73,7 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
           onFieldClick={(row, col) => {
             const newState = [...boardState];
             newState[row][col].state = nextSquareState(
-              boardState[row][col].state
+              boardState[row][col].state,
             );
             setBoardState(newState);
           }}
@@ -85,8 +86,9 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
             if (
               boardState[row][col].state !== SquareState.UNKNOWN ||
               !possibleConfigs
-            )
+            ) {
               return undefined;
+            }
             return `hsl(${
               (possibleConfigs[row][col] / (highestConfigurationCount || 1)) *
               200
@@ -97,8 +99,9 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
               !possibleConfigs ||
               !showFullOutput ||
               boardState[row][col].state !== SquareState.UNKNOWN
-            )
+            ) {
               return null;
+            }
             return (
               <div className="text-white text-xs">
                 {possibleConfigs[row][col]}

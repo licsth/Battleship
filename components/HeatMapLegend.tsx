@@ -1,5 +1,5 @@
-import { range } from "lodash";
-import { FunctionComponent } from "react";
+import { range } from 'lodash';
+import { FunctionComponent } from 'react';
 
 export const HeatMapLegend: FunctionComponent = () => {
   return (
@@ -21,10 +21,10 @@ export const HeatMapLegend: FunctionComponent = () => {
               height: 25,
               background: `hsl(${num}, 90%, 48%)`,
             }}
-            key={"legend-" + num}
+            key={'legend-' + num}
             className="text-center text-xs text-white flex items-center justify-center"
           >
-            {(num === 0 && "low") || (num === 200 && "high")}
+            {(num === 0 && 'low') || (num === 200 && 'high')}
           </div>
         ))}
       </div>

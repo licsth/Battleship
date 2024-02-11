@@ -1,7 +1,7 @@
-import { range } from "lodash";
-import { FunctionComponent } from "react";
-import { Board, SquareState } from "../utilities/boardState";
-import { classNames } from "../utilities/classNames";
+import { range } from 'lodash';
+import { FunctionComponent } from 'react';
+import { Board, SquareState } from '../utilities/boardState';
+import { classNames } from '../utilities/classNames';
 
 interface Props {
   boardState: Board;
@@ -27,17 +27,17 @@ export const BoardDisplay: FunctionComponent<Props> = ({
   return (
     <>
       {range(boardSize).map((row) => (
-        <div className="flex flex-row gap-2 mb-2" key={"row-" + row}>
+        <div className="flex flex-row gap-2 mb-2" key={'row-' + row}>
           {range(boardSize).map((col) => (
             <div
-              key={"row-" + row + "-col-" + col}
+              key={'row-' + row + '-col-' + col}
               className={classNames(
-                "w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer",
+                'w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer',
                 (boardState[row][col].state === SquareState.MISSED ||
                   boardState[row][col].state === SquareState.SHIP_HIT) &&
-                  "bg-slate-200",
+                  'bg-slate-200',
                 boardState[row][col].state === SquareState.SHIP_SUNK &&
-                  "bg-slate-600",
+                  'bg-slate-600',
                 boardState[row][col].state === SquareState.UNKNOWN &&
                   !isLoading &&
                   `bg-slate-200 p-1`,
@@ -45,7 +45,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
                   isLoading &&
                   !disableLoadingAnimation?.(row, col) &&
                   `bg-slate-300 p-1 loading`,
-                fieldIsStriped?.(row, col) && "striped"
+                fieldIsStriped?.(row, col) && 'striped',
               )}
               onClick={() => {
                 onFieldClick(row, col);
@@ -55,7 +55,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
                 animationDelay:
                   boardState[row][col].state === SquareState.UNKNOWN &&
                   isLoading
-                    ? (row + col) / boardSize + "s"
+                    ? (row + col) / boardSize + 's'
                     : undefined,
               }}
             >
