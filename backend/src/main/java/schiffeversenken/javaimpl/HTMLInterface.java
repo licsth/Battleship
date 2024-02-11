@@ -34,7 +34,6 @@ public class HTMLInterface {
     DefensiveStrategy defensiveStrategy;
     switch (strategies.defensiveStrategy) {
       case "HideShips":
-        // TODO pass states
         defensiveStrategy = new HideShips(states);
         break;
 
