@@ -4,12 +4,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import schiffeversenken.javaimpl.strategies.*;
 import schiffeversenken.javaimpl.players.Player;
@@ -119,10 +123,12 @@ public class HTMLInterface {
 
   @GetMapping("/api/randomConfig")
   public int[][] getRandomState() {
-    int index = (int) (Math.random() * Gamestates.STATES_IN_STANDARD_8x8);
-    System.out.println("Returning random state at index " + index);
     try {
-      long state = Utils.readLongAtBit(Game.GAME_STATES_FILENAME, index*8);
+      Random rnd = ThreadLocalRandom.current();
+      long pos = rnd.nextLong(Gamestates.STATES_IN_STANDARD_8x8);
+      RandomAccessFile raf = new RandomAccessFile(Game.GAME_STATES_FILENAME, "r");
+      raf.seek(pos * Long.BYTES);
+      long state = raf.readLong();
       return Utils.longTo2DArray(state);
     } catch (Exception e) {
       throw new RuntimeException(e);

@@ -179,23 +179,4 @@ public class Utils {
         return result;
     }
 
-    public static long readLongAtBit(String filePath, int byteOffset) throws IOException {
-        try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
-            // Move to the byte position where the starting bit resides
-            file.seek(byteOffset);
-
-            // Read 8 bytes from the file
-            byte[] buffer = new byte[8];
-            file.readFully(buffer);
-
-            // Extract bits from the bytes and combine them into a long
-            long result = 0;
-            for (int i = 0; i < 8; i++) {
-                result |= ((long) (buffer[i] & 0xFF)) << ((7 - i) * 8);
-            }
-
-            return result;
-        }
-    }
-
 }
