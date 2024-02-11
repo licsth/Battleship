@@ -141,12 +141,12 @@ public class Utils {
             long shipDown = ship >>> boardSize & hits;
             // leftMask is a mask that is 1 on all positions that are not on the left edge
             // of the board
-            long leftMask = 0xfefefefefefefefeL >>> (64 - boardSize);
-            long shipLeft = (ship & ~leftMask) << 1 & hits;
+            long leftMask = 0xfefefefefefefefeL;
+            long shipLeft = ship << 1& leftMask & hits;
             // rightMask is a mask that is 1 on all positions that are not on the right edge
             // of the board
-            long rightMask = 0x7f7f7f7f7f7f7f7fL >>> (64 - boardSize);
-            long shipRight = (ship & ~rightMask) >>> 1 & hits;
+            long rightMask = 0x7f7f7f7f7f7f7f7fL;
+            long shipRight = ship >>>1 & rightMask & hits;
             ship |= shipUp | shipDown | shipLeft | shipRight;
         }
         return ship;
