@@ -129,6 +129,7 @@ public class HTMLInterface {
       RandomAccessFile raf = new RandomAccessFile(Game.GAME_STATES_FILENAME, "r");
       raf.seek(pos * Long.BYTES);
       long state = raf.readLong();
+      raf.close();
       return Utils.longTo2DArray(state);
     } catch (Exception e) {
       throw new RuntimeException(e);
