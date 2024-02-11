@@ -14,6 +14,8 @@ import schiffeversenken.javaimpl.Utils;
 public class HideShips extends DefensiveStrategy {
 
     private long[] states;
+    private int guessCount = 0;
+    private final int guaranteedMisses = 3;
 
     public HideShips(long[] states) {
         super();
@@ -23,6 +25,22 @@ public class HideShips extends DefensiveStrategy {
     @Override
     public int shootSquare(long square) {
         int numberStates = 0;
+        guessCount++;
+        if(guessCount <= guaranteedMisses) {
+            this.miss |= square;
+            return 0;
+        }
+        if(guessCount == guaranteedMisses+1) {
+            // filter states for the first time
+            for (int i = 0; i < states.length; i++) {
+                if ((states[i] & this.miss) == 0L) {
+                    states[numberStates++] = states[i];
+                }
+            }
+            System.out.println("Remaining states: " + numberStates);
+            this.states = Arrays.copyOf(states, numberStates);
+            numberStates = 0;
+        }
         for (int i = 0; i < states.length; i++) {
             if ((states[i] & square) == 0L) {
                 states[numberStates++] = states[i];

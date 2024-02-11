@@ -60,7 +60,7 @@ public class GridGuesses extends OffensiveStrategy {
                 break;
             case 1:
                 // TODO handle
-                targeting = true;
+                // targeting = true;
                 break;
             case 2:
                 // TODO handle

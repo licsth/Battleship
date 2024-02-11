@@ -12,6 +12,7 @@ import {
 import { shapesEqualWithoutRotation } from '../utilities/shipShapesEqual';
 import { JavaShipDisplay } from './JavaShipDisplay';
 import { BoardDisplay } from './BoardDisplay';
+import { classNames } from '../utilities/classNames';
 
 interface Props {}
 
@@ -70,11 +71,13 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
 
   const [defenseIsLoading, setDefenseIsLoading] = useState(false);
   const [offenseIsLoading, setOffenseIsLoading] = useState(false);
+  const [startIsLoading, setStartIsLoading] = useState(false);
 
   function startGame(
     defensiveStrategy: DefensiveStrategy,
     offensiveStrategy: OffensiveStrategy,
   ) {
+    setStartIsLoading(true);
     fetch('http://localhost:8080/api/start', {
       method: 'POST',
       headers: {
@@ -90,7 +93,8 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
       .catch((e) => {
         console.error(e);
         alert('Error fetching game start response.');
-      });
+      })
+      .finally(() => setStartIsLoading(false));
   }
 
   async function postGuess(square: number) {
@@ -263,8 +267,14 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
         {!gameStarted && (
           <div>
             <div
-              className="bg-cyan-500 hover:bg-cyan-600 text-white cursor-pointer w-min px-3 py-2 rounded"
-              onClick={() => startGame(defensiveStrategy, offensiveStrategy)}
+              className={classNames(
+                startIsLoading ? 'cursor-not-allowed' : 'cursor.pointer',
+                'bg-cyan-500 hover:bg-cyan-600 text-white w-min px-3 py-2 rounded',
+              )}
+              onClick={() =>
+                !startIsLoading &&
+                startGame(defensiveStrategy, offensiveStrategy)
+              }
             >
               Start
             </div>

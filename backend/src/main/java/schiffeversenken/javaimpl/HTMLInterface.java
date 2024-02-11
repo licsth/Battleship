@@ -26,6 +26,7 @@ public class HTMLInterface {
         "Received start request with strategies: " + strategies.defensiveStrategy + " " + strategies.offensiveStrategy);
 
     long[] states = readStatesIfNecessary(strategies.offensiveStrategy, strategies.defensiveStrategy);
+    System.out.println("Read states: " + states.length);
     DefensiveStrategy defensiveStrategy;
     switch (strategies.defensiveStrategy) {
       case "HideShips":
@@ -72,7 +73,7 @@ public class HTMLInterface {
    *         known.
    */
   private long[] readStatesIfNecessary(String offensiveStrategy, String defensiveStrategy) {
-    if (defensiveStrategy == "HideShips") {
+    if (defensiveStrategy.equals("HideShips")) {
       long[] states = new long[Gamestates.STATES_IN_STANDARD_8x8];
       try (DataInputStream ds = new DataInputStream(
           new BufferedInputStream(new FileInputStream(Game.GAME_STATES_FILENAME)))) {
@@ -80,6 +81,8 @@ public class HTMLInterface {
           states[i] = ds.readLong();
         }
       } catch (Exception e) {
+        // print exception
+        System.out.println(e);
         System.out.println("Error reading states");
       }
       return states;

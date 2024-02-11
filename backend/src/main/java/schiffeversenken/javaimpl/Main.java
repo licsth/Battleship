@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
 
         Gamestates gs = new Gamestates(true);
+        System.out.println("Started writing gamestates.bin...");
         try (DataOutputStream ds = new DataOutputStream(
                 new BufferedOutputStream(new FileOutputStream(Game.GAME_STATES_FILENAME)))) {
             for (long l : gs.gameStates) {
@@ -19,6 +20,7 @@ public class Main {
             }
         } catch (Exception e) {
         }
+        System.out.println("Wrote gamestates.bin");
 
         // ------------ THIS CAN BE USED TO LOAD THE
         // long[] states = new long[Gamestates.STATES_IN_STANDARD_8x8];
