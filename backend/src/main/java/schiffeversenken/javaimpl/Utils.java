@@ -202,4 +202,20 @@ public class Utils {
         return result;
     }
 
+    public static int[][] countUpLongBits(long[] states) {
+        int[] stateCount = new int[64];
+        for (long l : states) {
+            for (int i = 0; i < 64; i++) {
+                if(((l >> i) & 1L) != 0) {
+                    stateCount[i]++;
+                }
+            }
+        }
+        int[][] result = new int[8][8];
+        for (int i = 0; i < 64; i++) {
+            result[i / 8][i % 8] = stateCount[i];
+        }
+        return result;
+    }
+
 }

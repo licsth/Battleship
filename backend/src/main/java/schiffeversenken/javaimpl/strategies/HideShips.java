@@ -15,7 +15,7 @@ public class HideShips extends DefensiveStrategy {
 
     private long[] states;
     private int guessCount = 0;
-    private final int guaranteedMisses = 3;
+    private final int guaranteedMisses = 5;
 
     public HideShips(long[] states) {
         super();
