@@ -77,16 +77,7 @@ public class HTMLInterface {
    */
   private long[] readStatesIfNecessary(String offensiveStrategy, String defensiveStrategy) {
     if (defensiveStrategy.equals("HideShips")) {
-      long[] states = new long[Gamestates.STATES_IN_STANDARD_8x8];
-      try (DataInputStream ds = new DataInputStream(
-          new BufferedInputStream(new FileInputStream(Game.GAME_STATES_FILENAME)))) {
-        for (int i = 0; i < states.length; i++) {
-          states[i] = ds.readLong();
-        }
-      } catch (Exception e) {
-        System.out.println("Error reading states");
-      }
-      return states;
+      return Utils.readStatesFromFile();
     }
     return new long[0];
   }

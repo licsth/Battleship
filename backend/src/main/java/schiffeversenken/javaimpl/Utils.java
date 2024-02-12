@@ -8,6 +8,13 @@ import java.util.Random;
 import java.io.RandomAccessFile;
 import java.io.IOException;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 public class Utils {
 
     private static long[] getVerticalPositions(long ship, int freeSquaresAbove, int size) {
@@ -158,17 +165,33 @@ public class Utils {
      * @return all states for the 8x8 grid
      */
     public static long[] readStatesFromFile() {
+
+        long start = System.currentTimeMillis();
+        System.out.println("Started reading gamestates.bin...");
+        int index = 0;
+
         long[] states = new long[Gamestates.STATES_IN_STANDARD_8x8];
-        try (DataInputStream ds = new DataInputStream(
-                new BufferedInputStream(new FileInputStream(Game.GAME_STATES_FILENAME)))) {
-            for (int i = 0; i < Gamestates.STATES_IN_STANDARD_8x8; i++) {
-                states[i] = ds.readLong();
+        Path path = Paths.get(Game.GAME_STATES_FILENAME);
+        try (FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
+            ByteBuffer buffer = ByteBuffer.allocateDirect(8192); // Allocate a smaller buffer
+            buffer.order(ByteOrder.LITTLE_ENDIAN); // Assuming little-endian byte order
+            
+            int bytesRead;
+            while ((bytesRead = channel.read(buffer)) != -1) {
+                buffer.flip(); // Switch to reading mode
+                while (buffer.remaining() >= 8) {
+                    states[index++] = buffer.getLong();
+                }
+                buffer.compact(); // Compact the buffer to make room for more data
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Something went wrong when reading the states.");
         }
+        System.out.println("Read in " + (System.currentTimeMillis() - start) + " ms.");
+
         return states;
+
     }
 
     public static int[][] longTo2DArray(long l) {
