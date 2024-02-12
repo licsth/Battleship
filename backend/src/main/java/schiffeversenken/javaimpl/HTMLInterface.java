@@ -22,6 +22,12 @@ import schiffeversenken.javaimpl.players.Player;
 @CrossOrigin(origins = "http://localhost:3000")
 public class HTMLInterface {
 
+  long[] states;
+
+  public HTMLInterface() {
+    this.states = Utils.readStatesFromFile();
+  }
+
   private Player computerPlayer = null;
 
   @PostMapping("/api/start")
@@ -109,6 +115,36 @@ public class HTMLInterface {
     }
     // return index of the first 1 in the bit representation of nextMoveSquare
     return Long.numberOfLeadingZeros(computerPlayer.getNextMove());
+  }
+
+  @PostMapping("/api/possibleConfigs")
+  public int[][] getNextMove(@RequestBody CurrentState currentState) {
+    long miss = Utils.arrayToLong(currentState.misses);
+    long hit = Utils.arrayToLong(currentState.hits);
+    long sunk = Utils.arrayToLong(currentState.sunk);
+    long boundary = Utils.getBoundary(sunk, 8);
+    int[] configs = new int[64];
+    for(long l : states) {
+      if((l & (miss | boundary)) != 0) {
+        continue;
+      }
+      // TODO hit ships must have a missing square
+        continue;
+      }
+      if((sunk & ~l) != 0) {
+        continue;
+      }
+      for(int i = 0; i < 64; i++) {
+        if((l & (1L << i)) != 0) {
+          configs[i]++;
+        }
+      }
+    }
+    int[][] result = new int[8][8];
+    for(int i = 0; i < 64; i++) {
+      result[i / 8][i % 8] = configs[i];
+    }
+    return result;
   }
 
   @GetMapping("/api/randomConfig")

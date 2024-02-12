@@ -28,7 +28,7 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
   unsunkenShips,
   setPossibleConfigs,
 }) => {
-  function calculatePossibleConfigs() {
+  async function calculatePossibleConfigs() {
     const time = Date.now();
     setPossibleConfigs(
       possibleConfigurations(
@@ -47,6 +47,28 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
         true,
       ),
     );
+    // await fetch('http://localhost:8080/api/possibleConfigs', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     misses: boardState.map((row) =>
+    //       row.map((col) => (col.state === SquareState.MISSED ? 1 : 0)),
+    //     ),
+    //     hits: boardState.map((row) =>
+    //       row.map((col) => (col.state === SquareState.SHIP_HIT ? 1 : 0)),
+    //     ),
+    //     sunk: boardState.map((row) =>
+    //       row.map((col) => (col.state === SquareState.SHIP_SUNK ? 1 : 0)),
+    //     ),
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //     setPossibleConfigs(data);
+    //   });
     setComputationTime(Date.now() - time);
   }
 

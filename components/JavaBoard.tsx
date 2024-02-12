@@ -36,6 +36,8 @@ const ships = [
   [[true, true, true, true]],
 ];
 
+export const standardShips = ships;
+
 export const JavaBoard: FunctionComponent<Props> = ({}) => {
   const [attackState, setAttackState] = useState<Board>(
     newGrid(8, 8, () => ({ state: SquareState.UNKNOWN })),

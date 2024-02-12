@@ -30,11 +30,10 @@ export const Gameboard: FunctionComponent = ({}) => {
     newGrid(boardSize, boardSize, () => ({ state: SquareState.UNKNOWN })),
   );
 
-  const [ships, setShips] = useState<ShipShape[]>([
-    [[true, true]],
-    [[true, true]],
-    [[true, true, true]],
-  ]);
+  const [ships, setShips] = useState<ShipShape[]>(
+    [[[true, true]], [[true, true]], [[true, true, true]]],
+    // standardShips,
+  );
 
   const unsunkenShipIndices = useMemo(
     () => getUnsunkenShipIndicesInBoardState(boardState, ships),

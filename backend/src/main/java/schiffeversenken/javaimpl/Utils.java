@@ -202,6 +202,14 @@ public class Utils {
         return result;
     }
 
+    public static long arrayToLong(int[][] array) {
+        long result = 0L;
+        for (int i = 0; i < 64; i++) {
+            result |= ((long) array[i / 8][i % 8]) << i;
+        }
+        return result;
+    }
+
     public static int[][] countUpLongBits(long[] states) {
         int[] stateCount = new int[64];
         for (long l : states) {
