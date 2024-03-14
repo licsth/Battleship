@@ -24,6 +24,7 @@ enum DefensiveStrategy {
 enum OffensiveStrategy {
   GridGuesses = 'GridGuesses',
   RandomGuesses = 'RandomGuesses',
+  Greedy = 'Greedy',
 }
 
 const ships = [
