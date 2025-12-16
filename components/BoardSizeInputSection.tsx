@@ -25,7 +25,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
         <div>
           <label className="block text-xs py-1 text-cyan-600">Game mode</label>
           <select
-            className="text-xs p-2 shadow-sm rounded"
+            className="text-xs p-2 shadow-xs rounded-sm"
             value={gameMode}
             onChange={(e) => setGameMode(e.target.value as unknown as GameMode)}
           >
@@ -42,7 +42,7 @@ export const BoardSizeInputSection: FunctionComponent<Props> = ({
             </label>
             <input
               type="number"
-              className="block shadow-sm p-1 text-center focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent rounded w-20"
+              className="block shadow-xs p-1 text-center focus:ring-purple-500 focus:outline-hidden focus:ring-2 focus:border-transparent rounded-sm w-20"
               min={1}
               step={1}
               value={boardSize}

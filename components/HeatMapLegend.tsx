@@ -39,7 +39,7 @@ export const HeatMapLegend: FunctionComponent = () => {
             Ship hit
           </div>
           <div className="flex items-center gap-3">
-            <span className="h-6 w-6 bg-slate-600 rounded"></span>
+            <span className="h-6 w-6 bg-slate-600 rounded-sm"></span>
             Ship sunk
           </div>
         </div>

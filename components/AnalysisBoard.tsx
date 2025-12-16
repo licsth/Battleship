@@ -134,7 +134,7 @@ export const AnalysisBoard: FunctionComponent<Props> = ({
       </div>
       <button
         onClick={calculatePossibleConfigs}
-        className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 mb-2 text-lg w-44 shadow-sm caps"
+        className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-sm p-2 mb-2 text-lg w-44 shadow-xs caps"
       >
         Calculate
       </button>

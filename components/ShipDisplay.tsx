@@ -50,7 +50,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
                     <div
                       key={`row-${i}-col-${j}`}
                       className={classNames(
-                        'rounded inline-flex items-center mr-[3px] text-center justify-center align-middle',
+                        'rounded-sm inline-flex items-center mr-[3px] text-center justify-center align-middle',
                         col &&
                           (unsunkenShipIndices.includes(shipIndex)
                             ? 'bg-purple-400'
@@ -77,7 +77,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
           <div>
             <button
               onClick={() => deleteShip(shipIndex)}
-              className="bg-red-500 hover:bg-red-600 text-white rounded py-1.5 px-3 mb-2 shadow-sm caps block text-sm"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-sm py-1.5 px-3 mb-2 shadow-xs caps block text-sm"
             >
               Delete
             </button>
@@ -89,7 +89,7 @@ export const ShipDisplay: FunctionComponent<Props> = ({
           onClick={() => {
             setShips([...ships, [[true]]]);
           }}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded py-2 px-4 mb-2 shadow-sm caps block"
+          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-sm py-2 px-4 mb-2 shadow-xs caps block"
         >
           Add ship
         </button>

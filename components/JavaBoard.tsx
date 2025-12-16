@@ -247,7 +247,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             <p className="text-sm">{defensiveStrategy}</p>
           ) : (
             <select
-              className="rounded text-xs px-1 py-2 shadow-sm"
+              className="rounded-sm text-xs px-1 py-2 shadow-xs"
               onChange={(e) =>
                 setDefensiveStrategy(e.target.value as DefensiveStrategy)
               }
@@ -268,7 +268,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             <p className="text-sm">{offensiveStrategy}</p>
           ) : (
             <select
-              className="rounded text-xs px-1 py-2 shadow-sm"
+              className="rounded-sm text-xs px-1 py-2 shadow-xs"
               onChange={(e) =>
                 setOffensiveStrategy(e.target.value as OffensiveStrategy)
               }
@@ -286,7 +286,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             <div
               className={classNames(
                 startIsLoading ? 'cursor-not-allowed' : 'cursor.pointer',
-                'bg-cyan-500 hover:bg-cyan-600 text-white w-min px-3 py-2 rounded',
+                'bg-cyan-500 hover:bg-cyan-600 text-white w-min px-3 py-2 rounded-sm',
               )}
               onClick={() =>
                 !startIsLoading &&
@@ -347,13 +347,13 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
               <>
                 <button
                   onClick={chooseRandomConfig}
-                  className="bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 text-xs w-32 shadow-sm mr-5"
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-sm p-2 text-xs w-32 shadow-xs mr-5"
                 >
                   Choose random layout
                 </button>
                 <button
                   onClick={checkDefenseLayout}
-                  className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+                  className="bg-purple-400 hover:bg-purple-500 text-white rounded-sm p-2 text-xs w-32 shadow-xs"
                 >
                   Confirm Layout
                 </button>
@@ -361,7 +361,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
             ) : (
               <button
                 onClick={confirmGuess}
-                className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-32 shadow-sm"
+                className="bg-purple-400 hover:bg-purple-500 text-white rounded-sm p-2 text-xs w-32 shadow-xs"
               >
                 Guess
               </button>
@@ -382,7 +382,7 @@ export const JavaBoard: FunctionComponent<Props> = ({}) => {
                 setDefenseLayoutIsConfirmed(false);
                 setGameStarted(false);
               }}
-              className="ml-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded p-2 text-xs w-32 shadow-sm"
+              className="ml-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-sm p-2 text-xs w-32 shadow-xs"
             >
               Reset game
             </button> */}

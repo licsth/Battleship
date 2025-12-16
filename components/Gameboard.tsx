@@ -90,7 +90,7 @@ export const Gameboard: FunctionComponent = ({}) => {
           gameMode={gameMode}
           setGameMode={setGameMode}
         />
-        <div className="flex flex-col items-center justify-center content-center flex-grow">
+        <div className="flex flex-col items-center justify-center content-center grow">
           {gameMode === GameMode.ANALYSIS && (
             <AnalysisBoard
               showFullOutput={showFullOutput}
@@ -128,7 +128,7 @@ export const Gameboard: FunctionComponent = ({}) => {
                 );
                 setPossibleConfigs(null);
               }}
-              className="bg-purple-400 hover:bg-purple-500 text-white rounded p-2 text-xs w-44 shadow-sm"
+              className="bg-purple-400 hover:bg-purple-500 text-white rounded-sm p-2 text-xs w-44 shadow-xs"
             >
               Reset board
             </button>

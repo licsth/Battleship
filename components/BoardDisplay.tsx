@@ -32,7 +32,7 @@ export const BoardDisplay: FunctionComponent<Props> = ({
             <div
               key={'row-' + row + '-col-' + col}
               className={classNames(
-                'w-10 h-10 rounded inline-flex items-center justify-center cursor-pointer',
+                'w-10 h-10 rounded-sm inline-flex items-center justify-center cursor-pointer',
                 (boardState[row][col].state === SquareState.MISSED ||
                   boardState[row][col].state === SquareState.SHIP_HIT) &&
                   'bg-slate-200',

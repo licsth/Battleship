@@ -23,7 +23,7 @@ export const JavaShipDisplay: FunctionComponent<Props> = ({
                   <div
                     key={`row-${i}-col-${j}`}
                     className={classNames(
-                      'rounded inline-flex items-center mr-[3px] text-center justify-center align-middle',
+                      'rounded-sm inline-flex items-center mr-[3px] text-center justify-center align-middle',
                       col &&
                         (unsunkenShipIndices.includes(shipIndex)
                           ? 'bg-purple-400'
