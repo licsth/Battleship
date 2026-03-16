@@ -1,5 +1,5 @@
 import { range } from 'lodash';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, type JSX } from 'react';
 import { Board, SquareState } from '../utilities/boardState';
 import { classNames } from '../utilities/classNames';
 
