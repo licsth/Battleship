@@ -1,21 +1,38 @@
-import { Board, SquareState } from "./boardState";
-import { findSunkenShip } from "./findSunkenShip";
+import { Board, SquareState } from './boardState';
+import { findSunkenShip } from './findSunkenShip';
 
 export function copySunkShips(boardState: Board, possibleConfig: number[][]) {
-  const hitPositions = boardState.flatMap((row, y) => row.map((square, x) => ({ x, y, square })).filter(({ square }) => square.state === SquareState.SHIP_HIT));
-  hitPositions.forEach(({ x, y }) => copySunkShipAt(boardState, possibleConfig, y, x));
+  const hitPositions = boardState.flatMap((row, y) =>
+    row
+      .map((square, x) => ({ x, y, square }))
+      .filter(({ square }) => square.state === SquareState.SHIP_HIT),
+  );
+  hitPositions.forEach(({ x, y }) =>
+    copySunkShipAt(boardState, possibleConfig, y, x),
+  );
 }
 
-export function copySunkShipAt(boardState: Board, possibleConfig: number[][], row: number, col: number) {
+export function copySunkShipAt(
+  boardState: Board,
+  possibleConfig: number[][],
+  row: number,
+  col: number,
+) {
   if (boardState[row][col].state !== SquareState.SHIP_HIT) return;
-  const possibleConfigBoardState = possibleConfig.map(row => row.map(col => ({ state: col ? SquareState.SHIP_SUNK : SquareState.UNKNOWN })));
+  const possibleConfigBoardState = possibleConfig.map((row) =>
+    row.map((col) => ({
+      state: col ? SquareState.SHIP_SUNK : SquareState.UNKNOWN,
+    })),
+  );
 
   const ship = findSunkenShip(possibleConfigBoardState, col, row);
   if (ship) {
     let allDiscovered = true;
     for (let y = 0; y < ship.length; y++) {
       for (let x = 0; x < ship[y].length; x++) {
-        if (ship[y][x] && boardState[y][x].state === SquareState.UNKNOWN) { allDiscovered = false; }
+        if (ship[y][x] && boardState[y][x].state === SquareState.UNKNOWN) {
+          allDiscovered = false;
+        }
       }
     }
     if (allDiscovered) {
@@ -43,4 +60,3 @@ export function copySunkShipAt(boardState: Board, possibleConfig: number[][], ro
     }
   }
 }
-

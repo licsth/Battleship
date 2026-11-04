@@ -1,4 +1,4 @@
-import { SquareState } from "./boardState";
+import { SquareState } from './boardState';
 
 const stateOrder = [
   SquareState.UNKNOWN,
@@ -8,8 +8,5 @@ const stateOrder = [
 ];
 
 export function nextSquareState(state: SquareState) {
-  return stateOrder[
-    (stateOrder.indexOf(state) + 1) %
-    stateOrder.length
-  ]
+  return stateOrder[(stateOrder.indexOf(state) + 1) % stateOrder.length];
 }

@@ -1,5 +1,5 @@
-import { Board, SquareState } from "./boardState";
-import { findHitShip } from "./findSunkenShip";
+import { Board, SquareState } from './boardState';
+import { findHitShip } from './findSunkenShip';
 
 export function sinkShip(boardState: Board, row: number, col: number) {
   const sunkenShip = findHitShip(boardState, col, row);

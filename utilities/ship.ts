@@ -8,5 +8,5 @@ export type ShipShape = boolean[][];
 
 export enum Orientation {
   VERTICAL,
-  HORIZONTAL
+  HORIZONTAL,
 }

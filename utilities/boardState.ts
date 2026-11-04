@@ -8,5 +8,5 @@ export enum SquareState {
   UNKNOWN,
   SHIP_HIT,
   SHIP_SUNK,
-  MISSED
+  MISSED,
 }

@@ -1,6 +1,10 @@
-import { ShipShape } from "./ship";
+import { ShipShape } from './ship';
 
-export function addSquareToShip(ship: ShipShape, row: number, col: number): ShipShape {
+export function addSquareToShip(
+  ship: ShipShape,
+  row: number,
+  col: number,
+): ShipShape {
   if (row < 0) {
     ship = [new Array(ship[0].length).fill(false), ...ship];
     row = 0;
@@ -16,5 +20,5 @@ export function addSquareToShip(ship: ShipShape, row: number, col: number): Ship
     ship = ship.map((row) => [...row, false]);
   }
   ship[row][col] = true;
-  return ship
+  return ship;
 }

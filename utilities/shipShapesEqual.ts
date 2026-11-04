@@ -1,5 +1,5 @@
-import { rotateShip } from "./rotateShip";
-import { ShipShape } from "./ship";
+import { rotateShip } from './rotateShip';
+import { ShipShape } from './ship';
 
 export function shipShapesEqual(ship1: ShipShape, ship2: ShipShape) {
   for (let i = 0; i < 4; i++) {
