@@ -1,61 +1,66 @@
-import { defineConfig } from "eslint/config";
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
-import _import from "eslint-plugin-import";
-import unusedImports from "eslint-plugin-unused-imports";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import importPlugin from 'eslint-plugin-import';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import unusedImports from 'eslint-plugin-unused-imports';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+// eslint-config-next already registers the `import`, `react`, `react-hooks`,
+// `jsx-a11y`, `@next/next` and `@typescript-eslint` plugins, so below we only
+// pull in the rule sets of the configs we extend, not their plugin definitions.
+const tsRecommendedRules = Object.assign(
+  {},
+  ...tsPlugin.configs['flat/recommended'].map((c) => c.rules ?? {}),
+);
 
-export default defineConfig([{
-    extends: fixupConfigRules(compat.extends(
-        "next/core-web-vitals",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-        "plugin:prettier/recommended",
-        "plugin:@typescript-eslint/recommended",
-    )),
+export default defineConfig([
+  globalIgnores(['backend/**', 'javaImpl/**']),
 
-    plugins: {
-        import: fixupPluginRules(_import),
-        "unused-imports": unusedImports,
-    },
+  ...nextCoreWebVitals,
 
-    languageOptions: {
-        parser: tsParser,
-        ecmaVersion: 5,
-        sourceType: "script",
-
-        parserOptions: {
-            project: ["./tsconfig.json", "./tsconfig.spec.json"],
-        },
-    },
-
+  {
     settings: {
-        "import/resolver": {
-            node: {
-                extensions: [".js", ".jsx", ".ts", ".tsx"],
-            },
+      ...importPlugin.flatConfigs.typescript.settings,
+      'import/resolver': {
+        ...importPlugin.flatConfigs.typescript.settings['import/resolver'],
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
+      },
     },
-
     rules: {
-        "import/order": 2,
-        "unused-imports/no-unused-imports-ts": 1,
-        "react/jsx-key": "off",
-        curly: [2, "multi-line"],
-        "no-console": "off",
-        "@typescript-eslint/no-floating-promises": ["error"],
-        "@typescript-eslint/no-non-null-assertion": "off",
+      ...importPlugin.flatConfigs.recommended.rules,
+      ...importPlugin.flatConfigs.typescript.rules,
     },
-}]);
+  },
+
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      ...tsRecommendedRules,
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
+
+  prettierRecommended,
+
+  {
+    plugins: {
+      'unused-imports': unusedImports,
+    },
+    rules: {
+      'import/order': 'error',
+      'unused-imports/no-unused-imports': 'warn',
+      'react/jsx-key': 'off',
+      curly: ['error', 'multi-line'],
+      'no-console': 'off',
+    },
+  },
+]);
